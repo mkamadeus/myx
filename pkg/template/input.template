@@ -1,0 +1,3 @@
+class Input(BaseModel):
+	{{range .Metadata}}{{.name}} : {{.type}}
+	{{end}}
