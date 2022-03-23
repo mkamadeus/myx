@@ -16,3 +16,9 @@ var ModelTemplate string
 
 //go:embed tabular_normal.template
 var TabularNormalTemplate string
+
+//go:embed tabular_scaled.template
+var TabularScaledTemplate string
+
+//go:embed tabular_onehot.template
+var TabularOnehotTemplate string

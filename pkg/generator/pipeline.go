@@ -92,6 +92,7 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 		fmt.Println(inputMapper)
 		for pos, val := range inputMapper {
 			fmt.Printf("%d -> %s\n", pos, reflect.TypeOf(val))
+
 		}
 
 		return "pipeline specccc", nil
