@@ -13,3 +13,6 @@ var ApiTemplate string
 
 //go:embed model.template
 var ModelTemplate string
+
+//go:embed tabular_normal.template
+var TabularNormalTemplate string

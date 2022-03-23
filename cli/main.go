@@ -20,6 +20,9 @@ func main() {
 		panic(err)
 	}
 
-	generator.RenderSpec(s)
+	err = generator.RenderSpec(s)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println(s)
 }

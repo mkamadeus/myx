@@ -10,11 +10,6 @@ import (
 	textTemplate "github.com/mkamadeus/myx/pkg/template"
 )
 
-type Generator interface {
-	Name() string
-	Execute(*spec.MyxSpec) error
-}
-
 func RenderSpec(s *spec.MyxSpec) error {
 	// generators := make([]Generator, 0)
 	var t *template.Template
@@ -22,23 +17,11 @@ func RenderSpec(s *spec.MyxSpec) error {
 	var buf *bytes.Buffer
 
 	// input
-	if s.Input.Format == "tabular" {
-		t, err = template.New("input").Parse(textTemplate.InputTemplate)
-		if err != nil {
-			panic(err)
-		}
-		buf := new(bytes.Buffer)
-		err = t.Execute(buf, s.Input)
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(buf.String())
-	} else if s.Input.Format == "image" {
-		// t, err := template.New("input").Parse(textTemplate.InputTemplate)
-		// fmt.Println()
-	} else {
-		return fmt.Errorf("undefined input type")
+	inputSpec, err := RenderInputSpec(s)
+	if err != nil {
+		return err
 	}
+	fmt.Println(inputSpec)
 
 	// output
 	t, err = template.New("output").Parse(textTemplate.OutputTemplate)
@@ -63,13 +46,11 @@ func RenderSpec(s *spec.MyxSpec) error {
 		panic(err)
 	}
 
-	// pipeline
-	// for _, pipeline := range s.Pipeline {
-	// 	if pipeline.Module == "preprocessing/scale" {
-	// 		scalerPath := fmt.Sprintf("%v", pipeline.Metadata["path"])
-
-	// 	}
-	// }
+	pipelineSpec, err := RenderPipelineSpec(s)
+	if err != nil {
+		return err
+	}
+	fmt.Println(pipelineSpec)
 
 	return nil
 }
