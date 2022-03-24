@@ -1,15 +1,32 @@
 package generator
 
 import (
+	"bytes"
 	"fmt"
 	"reflect"
+	"sort"
+	"strings"
+	"text/template"
 
 	"github.com/mkamadeus/myx/pkg/spec"
+	textTemplate "github.com/mkamadeus/myx/pkg/template"
 )
+
+var numpyTypeMapper = map[string]string{
+	"float":       "np.float32",
+	"int":         "np.int_",
+	"categorical": "np.int_",
+}
 
 type normalTabularPipeline struct {
 	Name string
 	Type string
+}
+
+type normalTabularCode struct {
+	Index     int
+	Name      string
+	NumpyType string
 }
 
 type scaledTabularPipeline struct {
@@ -18,11 +35,25 @@ type scaledTabularPipeline struct {
 	Path string
 }
 
+type scaledTabularCode struct {
+	Index     int
+	Name      string
+	Path      string
+	NumpyType string
+}
+
 type onehotTabularPipeline struct {
 	Name   string
 	Type   string
 	Values []string
 	Index  int
+}
+
+type onehotTabularCode struct {
+	Index     int
+	Name      string
+	Value     string
+	NumpyType string
 }
 
 func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
@@ -90,12 +121,77 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 		}
 		fmt.Println("pisang")
 		fmt.Println(inputMapper)
-		for pos, val := range inputMapper {
-			fmt.Printf("%d -> %s\n", pos, reflect.TypeOf(val))
+
+		// get keys
+		keys := make([]int, 0, len(inputMapper))
+		for k := range inputMapper {
+			keys = append(keys, k)
+		}
+		sort.Ints(keys)
+
+		// pipelineResult := make([]string, 0)
+		result := make([]string, 0)
+		for _, key := range keys {
+			val := inputMapper[key]
+			pipelineType := reflect.TypeOf(val).String()
+
+			if pipelineType == "*generator.normalTabularPipeline" {
+				casted := val.(*normalTabularPipeline)
+				t, err := template.New("tabular_normal").Parse(textTemplate.TabularNormalTemplate)
+				if err != nil {
+					panic(err)
+				}
+				buf := new(bytes.Buffer)
+				err = t.Execute(buf, &normalTabularCode{
+					Index:     key,
+					Name:      casted.Name,
+					NumpyType: numpyTypeMapper[strings.ToLower(casted.Type)],
+				})
+				if err != nil {
+					panic(err)
+				}
+				fmt.Println(buf.String())
+				result = append(result, buf.String())
+			} else if pipelineType == "*generator.onehotTabularPipeline" {
+				casted := val.(*onehotTabularPipeline)
+				t, err := template.New("tabular_onehot").Parse(textTemplate.TabularOnehotTemplate)
+				if err != nil {
+					panic(err)
+				}
+				buf := new(bytes.Buffer)
+				err = t.Execute(buf, &onehotTabularCode{
+					Index:     key,
+					Name:      casted.Name,
+					Value:     casted.Values[casted.Index],
+					NumpyType: numpyTypeMapper[strings.ToLower(casted.Type)],
+				})
+				if err != nil {
+					panic(err)
+				}
+				result = append(result, buf.String())
+			} else if pipelineType == "*generator.scaledTabularPipeline" {
+				casted := val.(*scaledTabularPipeline)
+				t, err := template.New("tabular_scaked").Parse(textTemplate.TabularScaledTemplate)
+				if err != nil {
+					panic(err)
+				}
+				buf := new(bytes.Buffer)
+				err = t.Execute(buf, &scaledTabularCode{
+					Index:     key,
+					Name:      casted.Name,
+					NumpyType: numpyTypeMapper[strings.ToLower(casted.Type)],
+					Path:      casted.Path,
+				})
+				if err != nil {
+					panic(err)
+				}
+				result = append(result, buf.String())
+			}
+			fmt.Printf("%d -> %s\n", key, pipelineType)
 
 		}
 
-		return "pipeline specccc", nil
+		return strings.Join(result, ""), nil
 
 	} else if s.Input.Format == "image" {
 		// TODO: image pipeline

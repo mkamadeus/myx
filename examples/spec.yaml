@@ -17,7 +17,7 @@ input:
       type: categorical
       preprocessed: true
     - name: embarked
-      type: float
+      type: categorical
       preprocessed: true
 output:
   - name: prediction

@@ -1,1 +1,2 @@
-t{{.Index}} =  np.array([[1 if body.{{.Name}} == {{.Value}} else 0]], dtype={{.NumpyType}})
+scaler = joblib.load('{{.Path}}')
+t{{.Index}} =  scaler.transform(np.array([[body.{{.Name}}]], dtype={{.NumpyType}}))

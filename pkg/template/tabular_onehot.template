@@ -1,2 +1,1 @@
-scaler = joblib.load('age.scaler')
-t{{.Index}} =  scaler.transform(np.array([[body.{{.Name}}]], dtype={{.NumpyType}}))
+t{{.Index}} =  np.array([[1 if body.{{.Name}} == "{{.Value}}" else 0]], dtype={{.NumpyType}})
