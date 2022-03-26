@@ -1,56 +1,43 @@
 package generator
 
 import (
-	"bytes"
 	_ "embed"
-	"fmt"
-	"text/template"
 
+	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/spec"
-	textTemplate "github.com/mkamadeus/myx/pkg/template"
 )
 
 func RenderSpec(s *spec.MyxSpec) error {
-	// generators := make([]Generator, 0)
-	var t *template.Template
-	var err error
-	var buf *bytes.Buffer
-
 	// input
+	logger.Logger.Instance.Info("rendered input specification")
 	inputSpec, err := RenderInputSpec(s)
 	if err != nil {
 		return err
 	}
-	fmt.Println(inputSpec)
+	logger.Logger.Instance.Debug(inputSpec)
 
 	// output
-	t, err = template.New("output").Parse(textTemplate.OutputTemplate)
+	logger.Logger.Instance.Info("rendered output specification")
+	outputSpec, err := RenderOutputSpec(s)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	buf = new(bytes.Buffer)
-	err = t.Execute(buf, s.Output)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(buf.String())
+	logger.Logger.Instance.Debug(outputSpec)
 
 	// model
-	t, err = template.New("model").Parse(textTemplate.ModelTemplate)
+	logger.Logger.Instance.Info("rendered model specification")
+	modelSpec, err := RenderModelSpec(s)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	buf = new(bytes.Buffer)
-	err = t.Execute(buf, s.Model)
-	if err != nil {
-		panic(err)
-	}
+	logger.Logger.Instance.Debug(modelSpec)
 
 	pipelineSpec, err := RenderPipelineSpec(s)
 	if err != nil {
 		return err
 	}
-	fmt.Println(pipelineSpec)
+	logger.Logger.Instance.Info("rendered pipeline specification")
+	logger.Logger.Instance.Debug(pipelineSpec)
 
 	return nil
 }

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/spec"
 	textTemplate "github.com/mkamadeus/myx/pkg/template"
 )
@@ -60,24 +61,26 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 
 	// pipeline
 	if s.Input.Format == "tabular" {
-		// t, err = template.New("pipeline").Parse(textTemplate.InputTemplate)
+		logger.Logger.Instance.Debug("running in tabular input mode")
+
+		// map input in temporary buffer
 		inputMapper := make(map[int]interface{})
-		fmt.Println("pisang")
+		logger.Logger.Instance.Info("mapping input in temporary buffer")
 		for _, input := range s.Input.Metadata {
-			fmt.Println(input)
 			// if input is not preprocessed
 			if input["preprocessed"] == nil || input["preprocessed"] == false {
-				fmt.Println("lol")
+				logger.Logger.Instance.Debugf("direct input %v", input)
 				inputMapper[input["target"].(int)] = &normalTabularPipeline{
 					Name: input["name"].(string),
 					Type: input["type"].(string),
 				}
 			} else {
 				// else when input is preprocessed
-				fmt.Println("lol2")
+				logger.Logger.Instance.Debugf("preprocessed input %v, detecting module", input)
 				for _, pipeline := range s.Pipeline {
 					// find the preprocessing module
 					if pipeline.Metadata["for"] == input["name"] {
+						logger.Logger.Instance.Debugf("using %s for input", pipeline.Module)
 						if pipeline.Module == "preprocessing/scale" {
 
 							inputMapper[pipeline.Metadata["target"].(int)] = &scaledTabularPipeline{
@@ -91,14 +94,12 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 							for ival, val := range values {
 								onehotValues[ival] = val.(string)
 							}
-							fmt.Println(onehotValues)
 
 							targets := pipeline.Metadata["target"].([]interface{})
 							onehotTargets := make([]int, len(targets))
 							for itar, tar := range targets {
 								onehotTargets[itar] = tar.(int)
 							}
-							fmt.Println(onehotTargets)
 
 							for ival := range onehotValues {
 								inputMapper[onehotTargets[ival]] = &onehotTabularPipeline{
@@ -110,6 +111,7 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 							}
 
 						} else {
+							logger.Logger.Instance.Debug("module not found")
 							return "", fmt.Errorf("invalid module found")
 						}
 
@@ -119,8 +121,9 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 			}
 
 		}
-		fmt.Println("pisang")
-		fmt.Println(inputMapper)
+
+		// map buffer to actual code
+		logger.Logger.Instance.Info("mapping buffer to code")
 
 		// get keys
 		keys := make([]int, 0, len(inputMapper))
@@ -150,7 +153,6 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 				if err != nil {
 					panic(err)
 				}
-				fmt.Println(buf.String())
 				result = append(result, buf.String())
 			} else if pipelineType == "*generator.onehotTabularPipeline" {
 				casted := val.(*onehotTabularPipeline)
@@ -187,7 +189,6 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 				}
 				result = append(result, buf.String())
 			}
-			fmt.Printf("%d -> %s\n", key, pipelineType)
 
 		}
 
