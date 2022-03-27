@@ -132,7 +132,6 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 		}
 		sort.Ints(keys)
 
-		// pipelineResult := make([]string, 0)
 		result := make([]string, 0)
 		for _, key := range keys {
 			val := inputMapper[key]

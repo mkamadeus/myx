@@ -1,29 +1,31 @@
 package generator
 
 import (
-	"bytes"
 	"fmt"
-	"html/template"
 
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/spec"
-	textTemplate "github.com/mkamadeus/myx/pkg/template"
+	"github.com/mkamadeus/myx/pkg/template/input"
 )
 
 func RenderInputSpec(s *spec.MyxSpec) (string, error) {
 	// input
 	if s.Input.Format == "tabular" {
 		logger.Logger.Instance.Debug("running in tabular input mode")
-		t, err := template.New("input").Parse(textTemplate.InputTemplate)
-		if err != nil {
-			panic(err)
+		values := make([]*input.InputValues, 0)
+		for _, m := range s.Input.Metadata {
+			values = append(values, &input.InputValues{
+				Name: m["name"].(string),
+				Type: m["type"].(string),
+			})
 		}
-		buf := new(bytes.Buffer)
-		err = t.Execute(buf, s.Input)
+
+		code, err := input.GenerateInputCode(values)
 		if err != nil {
-			panic(err)
+			return "", err
 		}
-		return buf.String(), nil
+		return code, nil
+
 	} else if s.Input.Format == "image" {
 		// TODO: implement input spec image
 	}

@@ -1,0 +1,19 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
+import onnxruntime as rt
+import numpy as np
+
+app = FastAPI()
+sess = rt.InferenceSession("titanic.onnx")
+
+{{template input}}
+
+{{template output}}
+
+@app.post('/')
+async def root(body : Input):
+	{{.PipelineCode}}
+	{{.ModelCode.Prediction}}
+
+	return Output(prediction=prediction)
