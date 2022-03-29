@@ -1,28 +1,22 @@
 package output
 
-import (
-	"bytes"
-	"text/template"
-)
-
-//go:embed output.template
-var OutputTemplate string
-
-type OutputValues []struct {
-	Name string
-	Type string
+type OutputCode struct {
+	Type       string
+	Prediction string
 }
 
-func GenerateOutputCode(values *OutputValues) (string, error) {
-	t, err := template.New("tabular_normal").Parse(OutputTemplate)
+func RenderOutputCode(typeValues []*OutputTypeValues, predictionValues *OutputPredictionValues) (*OutputCode, error) {
+	typeCode, err := GenerateOutputType(typeValues)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, values)
+	predictionCode, err := GenerateOutputPrediction(predictionValues)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return buf.String(), nil
+	return &OutputCode{
+		Type:       typeCode,
+		Prediction: predictionCode,
+	}, nil
 }

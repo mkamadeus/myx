@@ -1,24 +1,32 @@
 package generator
 
 import (
-	"bytes"
-	"text/template"
+	"fmt"
 
 	"github.com/mkamadeus/myx/pkg/spec"
-	textTemplate "github.com/mkamadeus/myx/pkg/template"
+	"github.com/mkamadeus/myx/pkg/template/model"
 )
 
-func RenderModelSpec(s *spec.MyxSpec) (string, error) {
-	t, err := template.New("model").Parse(textTemplate.ModelTemplate)
-	if err != nil {
-		return "", nil
+func RenderModelSpec(s *spec.MyxSpec) (*model.ModelCode, error) {
+	if s.Model.Format == "keras" {
+		kerasCode, err := model.RenderKerasModelCode(&model.ModelKerasBaseValues{
+			Path: s.Model.Path,
+		}, &model.ModelKerasPredictionValues{})
+		if err != nil {
+			return nil, err
+		}
+
+		return kerasCode, nil
+	} else if s.Model.Format == "onnx" {
+		onnxCode, err := model.RenderONNXModelCode(&model.ModelONNXBaseValues{
+			Path: s.Model.Path,
+		}, &model.ModelONNXPredictionValues{})
+		if err != nil {
+			return nil, err
+		}
+
+		return onnxCode, nil
 	}
 
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, s.Model)
-	if err != nil {
-		return "", nil
-	}
-
-	return buf.String(), nil
+	return nil, fmt.Errorf("invalid model format %s found", s.Model.Format)
 }

@@ -1,29 +1,26 @@
 package input
 
 import (
-	"bytes"
 	_ "embed"
-	"text/template"
 )
 
-//go:embed input.template
-var InputTemplate string
-
-type InputValues struct {
-	Name string
+type InputCode struct {
 	Type string
+	Body string
 }
 
-func GenerateInputCode(values []*InputValues) (string, error) {
-	t, err := template.New("input").Parse(InputTemplate)
+func RenderTabularInputCode(typeValues []*TabularInputTypeValues, bodyValues *TabularInputBodyValues) (*InputCode, error) {
+	typeCode, err := GenerateTabularInputTypeCode(typeValues)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, values)
+	bodyCode, err := GenerateTabularInputBodyCode(bodyValues)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return buf.String(), nil
+	return &InputCode{
+		Type: typeCode,
+		Body: bodyCode,
+	}, nil
 }

@@ -8,21 +8,22 @@ import (
 	"github.com/mkamadeus/myx/pkg/template/input"
 )
 
-func RenderInputSpec(s *spec.MyxSpec) (string, error) {
+func RenderInputSpec(s *spec.MyxSpec) (*input.InputCode, error) {
 	// input
 	if s.Input.Format == "tabular" {
 		logger.Logger.Instance.Debug("running in tabular input mode")
-		values := make([]*input.InputValues, 0)
+
+		values := make([]*input.TabularInputTypeValues, 0)
 		for _, m := range s.Input.Metadata {
-			values = append(values, &input.InputValues{
+			values = append(values, &input.TabularInputTypeValues{
 				Name: m["name"].(string),
 				Type: m["type"].(string),
 			})
 		}
 
-		code, err := input.GenerateInputCode(values)
+		code, err := input.RenderTabularInputCode(values, &input.TabularInputBodyValues{})
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 		return code, nil
 
@@ -30,5 +31,5 @@ func RenderInputSpec(s *spec.MyxSpec) (string, error) {
 		// TODO: implement input spec image
 	}
 
-	return "", fmt.Errorf("undefined input type %s", s.Input.Format)
+	return nil, fmt.Errorf("undefined input type %s", s.Input.Format)
 }
