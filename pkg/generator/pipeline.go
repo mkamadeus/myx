@@ -68,8 +68,9 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 			if input["preprocessed"] == nil || input["preprocessed"] == false {
 				logger.Logger.Instance.Debugf("direct input %v", input)
 				inputMapper[input["target"].(int)] = &pipeline.TabularNormalValues{
+					Index:     input["target"].(int),
 					Name:      input["name"].(string),
-					NumpyType: input["type"].(string),
+					NumpyType: numpyTypeMapper[input["type"].(string)],
 				}
 			} else {
 				// else when input is preprocessed
@@ -81,8 +82,9 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 						if p.Module == "preprocessing/scale" {
 
 							inputMapper[p.Metadata["target"].(int)] = &pipeline.TabularScaledValues{
+								Index:     p.Metadata["target"].(int),
 								Name:      input["name"].(string),
-								NumpyType: input["type"].(string),
+								NumpyType: numpyTypeMapper[input["type"].(string)],
 								Path:      fmt.Sprintf("%v", p.Metadata["path"]),
 							}
 						} else if p.Module == "preprocessing/onehot" {
@@ -100,10 +102,10 @@ func RenderPipelineSpec(s *spec.MyxSpec) (string, error) {
 
 							for ival := range onehotValues {
 								inputMapper[onehotTargets[ival]] = &pipeline.TabularOneHotValues{
+									Index:     onehotTargets[ival],
 									Name:      input["name"].(string),
-									NumpyType: input["type"].(string),
+									NumpyType: numpyTypeMapper[input["type"].(string)],
 									Value:     onehotValues[ival],
-									Index:     ival,
 								}
 							}
 
