@@ -16,44 +16,6 @@ var numpyTypeMapper = map[string]string{
 	"categorical": "np.int_",
 }
 
-type normalTabularPipeline struct {
-	Name string
-	Type string
-}
-
-type normalTabularCode struct {
-	Index     int
-	Name      string
-	NumpyType string
-}
-
-type scaledTabularPipeline struct {
-	Name string
-	Type string
-	Path string
-}
-
-type scaledTabularCode struct {
-	Index     int
-	Name      string
-	Path      string
-	NumpyType string
-}
-
-type onehotTabularPipeline struct {
-	Name   string
-	Type   string
-	Values []string
-	Index  int
-}
-
-type onehotTabularCode struct {
-	Index     int
-	Name      string
-	Value     string
-	NumpyType string
-}
-
 func RenderPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) {
 
 	// pipeline
@@ -141,7 +103,7 @@ func RenderPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) {
 		// variable names
 		variables := make([]string, 0)
 		for i := range keys {
-			variables = append(variables, fmt.Sprintf("%d", i+1))
+			variables = append(variables, fmt.Sprintf("%d", i))
 		}
 
 		code, err := pipeline.RenderTabularPipelineCode(values, &pipeline.PipelineAggregationValues{

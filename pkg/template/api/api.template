@@ -15,4 +15,4 @@ async def root({{.InputCode.Body}}):
 {{range .PipelineCode.Pipelines}}    {{.}}{{end}}
     {{.PipelineCode.Aggregation}}
 
-	  return {{.OutputCode.Prediction}}
+    return {{.OutputCode.Prediction}}

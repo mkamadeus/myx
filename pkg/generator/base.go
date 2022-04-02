@@ -8,12 +8,12 @@ import (
 	"github.com/mkamadeus/myx/pkg/template/api"
 )
 
-func RenderSpec(s *spec.MyxSpec) error {
+func RenderSpec(s *spec.MyxSpec) (string, error) {
 	// input
 	logger.Logger.Instance.Info("rendered input specification")
 	inputSpec, err := RenderInputSpec(s)
 	if err != nil {
-		return err
+		return "", err
 	}
 	logger.Logger.Instance.Debug(inputSpec)
 
@@ -21,7 +21,7 @@ func RenderSpec(s *spec.MyxSpec) error {
 	logger.Logger.Instance.Info("rendered output specification")
 	outputSpec, err := RenderOutputSpec(s)
 	if err != nil {
-		return err
+		return "", err
 	}
 	logger.Logger.Instance.Debug(outputSpec)
 
@@ -29,14 +29,14 @@ func RenderSpec(s *spec.MyxSpec) error {
 	logger.Logger.Instance.Info("rendered model specification")
 	modelSpec, err := RenderModelSpec(s)
 	if err != nil {
-		return err
+		return "", err
 	}
 	logger.Logger.Instance.Debug(modelSpec)
 
 	// pipeline
 	pipelineSpec, err := RenderPipelineSpec(s)
 	if err != nil {
-		return err
+		return "", err
 	}
 	logger.Logger.Instance.Info("rendered pipeline specification")
 	logger.Logger.Instance.Debug(pipelineSpec)
@@ -49,9 +49,9 @@ func RenderSpec(s *spec.MyxSpec) error {
 	}
 	apiCode, err := api.RenderAPICode(values)
 	if err != nil {
-		return err
+		return "", err
 	}
 	logger.Logger.Instance.Debug(apiCode)
 
-	return nil
+	return apiCode, nil
 }

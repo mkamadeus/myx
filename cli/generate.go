@@ -3,6 +3,8 @@ package cli
 import (
 	"errors"
 	"io/ioutil"
+	"os"
+	"path"
 
 	"github.com/mkamadeus/myx/pkg/config"
 	"github.com/mkamadeus/myx/pkg/generator"
@@ -31,8 +33,8 @@ func Execute() {
 			}
 			logger.Logger = l
 
-			path := args[0]
-			b, err := ioutil.ReadFile(path)
+			specPath := args[0]
+			b, err := ioutil.ReadFile(specPath)
 			if err != nil {
 				panic(err)
 			}
@@ -42,14 +44,25 @@ func Execute() {
 				panic(err)
 			}
 
-			err = generator.RenderSpec(s)
+			code, err := generator.RenderSpec(s)
 			if err != nil {
 				panic(err)
 			}
+
+			// write spec
+			f, err := os.Create(path.Join(config.Config.Output, "main.py"))
+			if err != nil {
+				panic(err)
+			}
+
+			defer f.Close()
+
+			f.WriteString(code)
 		},
 	}
 
 	rootCmd.PersistentFlags().BoolVarP(&config.Verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().StringVarP(&config.Output, "output", "o", "./", "generated code output")
 
 	if err := rootCmd.Execute(); err != nil {
 		panic(err)
