@@ -1,22 +1,21 @@
 package generator
 
 import (
-	"bytes"
-	"text/template"
-
 	"github.com/mkamadeus/myx/pkg/spec"
-	textTemplate "github.com/mkamadeus/myx/pkg/template"
+	"github.com/mkamadeus/myx/pkg/template/output"
 )
 
-func RenderOutputSpec(s *spec.MyxSpec) (string, error) {
-	t, err := template.New("output").Parse(textTemplate.OutputTemplate)
-	if err != nil {
-		return "", err
+func RenderOutputSpec(s *spec.MyxSpec) (*output.OutputCode, error) {
+	typeValues := make([]*output.OutputTypeValues, 0)
+	for _, m := range s.Output {
+		typeValues = append(typeValues, &output.OutputTypeValues{
+			Name: m.Name,
+			Type: m.Type,
+		})
 	}
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, s.Output)
+	outputCode, err := output.RenderOutputCode(typeValues, &output.OutputPredictionValues{})
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return buf.String(), nil
+	return outputCode, nil
 }

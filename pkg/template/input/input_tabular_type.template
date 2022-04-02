@@ -1,0 +1,3 @@
+class Input(BaseModel):
+	{{range .}}{{.Name}} : {{.Type}}
+	{{end}}
