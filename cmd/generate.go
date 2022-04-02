@@ -1,4 +1,4 @@
-package cli
+package cmd
 
 import (
 	"errors"
@@ -10,6 +10,7 @@ import (
 	"github.com/mkamadeus/myx/pkg/generator"
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/spec"
+	"github.com/mkamadeus/myx/pkg/template/code"
 	"github.com/spf13/cobra"
 )
 
@@ -44,7 +45,7 @@ func Execute() {
 				panic(err)
 			}
 
-			code, err := generator.RenderSpec(s)
+			apiCode, err := generator.RenderSpec(s)
 			if err != nil {
 				panic(err)
 			}
@@ -57,7 +58,10 @@ func Execute() {
 
 			defer f.Close()
 
-			f.WriteString(code)
+			f.WriteString(apiCode)
+
+			// copy related files
+			code.RenderFiles(config.Config.Output)
 		},
 	}
 
