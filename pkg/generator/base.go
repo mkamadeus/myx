@@ -5,6 +5,7 @@ import (
 
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/spec"
+	"github.com/mkamadeus/myx/pkg/template/api"
 )
 
 func RenderSpec(s *spec.MyxSpec) error {
@@ -32,12 +33,25 @@ func RenderSpec(s *spec.MyxSpec) error {
 	}
 	logger.Logger.Instance.Debug(modelSpec)
 
+	// pipeline
 	pipelineSpec, err := RenderPipelineSpec(s)
 	if err != nil {
 		return err
 	}
 	logger.Logger.Instance.Info("rendered pipeline specification")
 	logger.Logger.Instance.Debug(pipelineSpec)
+
+	values := &api.APIValues{
+		InputCode:    inputSpec,
+		OutputCode:   outputSpec,
+		PipelineCode: pipelineSpec,
+		ModelCode:    modelSpec,
+	}
+	apiCode, err := api.RenderAPICode(values)
+	if err != nil {
+		return err
+	}
+	logger.Logger.Instance.Debug(apiCode)
 
 	return nil
 }

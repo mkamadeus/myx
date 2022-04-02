@@ -3,35 +3,26 @@ package api
 import (
 	"bytes"
 	_ "embed"
-	"html/template"
+	"text/template"
 
 	"github.com/mkamadeus/myx/pkg/template/input"
 	"github.com/mkamadeus/myx/pkg/template/model"
 	"github.com/mkamadeus/myx/pkg/template/output"
+	"github.com/mkamadeus/myx/pkg/template/pipeline"
 )
 
 //go:embed api.template
 var APICode string
 
 type APIValues struct {
-	PipelineCode
-	InputCode  input.InputCode
-	OutputCode output.OutputCode
-	ModelCode  model.ModelCode
+	PipelineCode *pipeline.PipelineCode
+	InputCode    *input.InputCode
+	OutputCode   *output.OutputCode
+	ModelCode    *model.ModelCode
 }
 
-type InputCode struct {
-	Type string
-	Body string
-}
-
-type PipelineCode struct {
-	Pipelines   []string
-	Aggregation string
-}
-
-func GenerateAPICode(values *APIValues) (string, error) {
-	t, err := template.New("input").Parse(APICode)
+func RenderAPICode(values *APIValues) (string, error) {
+	t, err := template.New("api_code").Parse(APICode)
 	if err != nil {
 		panic(err)
 	}

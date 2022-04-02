@@ -3,39 +3,53 @@ package pipeline
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
 )
 
-type PipelineCode []string
+type PipelineCode struct {
+	Pipelines   []string
+	Aggregation string
+}
 
 // TODO: interface{} fix
-func RenderTabularPipelineCode(values []interface{}) (PipelineCode, error) {
-	result := make(PipelineCode, 0)
-	for _, val := range values {
+func RenderTabularPipelineCode(pipelineValues []interface{}, aggregationValues *PipelineAggregationValues) (*PipelineCode, error) {
+	pipelines := make([]string, 0)
+	for _, val := range pipelineValues {
 		pipelineType := reflect.TypeOf(val).String()
-		if pipelineType == "*pipeline.TabularNormalValues" {
-			casted := val.(*TabularNormalValues)
-			code, err := GenerateTabularNormalCode(casted)
+		if pipelineType == "*tabular.TabularNormalValues" {
+			casted := val.(*tabular.TabularNormalValues)
+			code, err := tabular.GenerateTabularNormalCode(casted)
 			if err != nil {
 				return nil, err
 			}
-			result = append(result, code)
-		} else if pipelineType == "*pipeline.TabularOneHotValues" {
-			casted := val.(*TabularOneHotValues)
-			code, err := GenerateTabularOneHotCode(casted)
+			pipelines = append(pipelines, code)
+		} else if pipelineType == "*tabular.TabularOneHotValues" {
+			casted := val.(*tabular.TabularOneHotValues)
+			code, err := tabular.GenerateTabularOneHotCode(casted)
 			if err != nil {
 				return nil, err
 			}
-			result = append(result, code)
-		} else if pipelineType == "*pipeline.TabularScaledValues" {
-			casted := val.(*TabularScaledValues)
-			code, err := GenerateTabularScaledCode(casted)
+			pipelines = append(pipelines, code)
+		} else if pipelineType == "*tabular.TabularScaledValues" {
+			casted := val.(*tabular.TabularScaledValues)
+			code, err := tabular.GenerateTabularScaledCode(casted)
 			if err != nil {
 				return nil, err
 			}
-			result = append(result, code)
+			pipelines = append(pipelines, code)
 		} else {
 			return nil, fmt.Errorf("invalid pipeline type %s found", pipelineType)
 		}
 	}
-	return result, nil
+
+	aggregation, err := GeneratePipelineAggregationCode(aggregationValues)
+	if err != nil {
+		return nil, err
+	}
+
+	return &PipelineCode{
+		Pipelines:   pipelines,
+		Aggregation: aggregation,
+	}, nil
 }

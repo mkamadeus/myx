@@ -8,12 +8,11 @@ app = FastAPI()
 {{.ModelCode.Session}}
 
 {{.InputCode.Type}}
-
 {{.OutputCode.Type}}
 
 @app.post('/')
 async def root({{.InputCode.Body}}):
-	{{range .PipelineCode.Pipelines}}
-	{{.PipelineCode.Aggregation}}
+{{range .PipelineCode.Pipelines}}    {{.}}{{end}}
+    {{.PipelineCode.Aggregation}}
 
-	return {{.OutputCode.Prediction}}
+	  return {{.OutputCode.Prediction}}
