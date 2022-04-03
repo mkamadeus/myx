@@ -17,7 +17,7 @@ func RenderInputSpec(s *spec.MyxSpec) (*input.InputCode, error) {
 		for _, m := range s.Input.Metadata {
 			values = append(values, &input.TabularInputTypeValues{
 				Name: m["name"].(string),
-				Type: m["type"].(string),
+				Type: bodyTypeMapper[m["type"].(string)],
 			})
 		}
 

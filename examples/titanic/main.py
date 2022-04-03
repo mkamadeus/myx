@@ -5,15 +5,15 @@ import onnxruntime as rt
 import numpy as np
 
 app = FastAPI()
-model = rt.InferenceSession(titanic.onnx)
+model = rt.InferenceSession("titanic.onnx")
 
 class Input(BaseModel):
 	pclass : int
 	sibsp : int
 	parch : int
 	age : float
-	gender : categorical
-	embarked : categorical
+	gender : str
+	embarked : str
 	
 
 class Output(BaseModel):
@@ -34,7 +34,10 @@ async def root(body: Input):
     t7 =  np.array([[1 if body.embarked == "Q" else 0]], dtype=np.int_)
     t8 =  np.array([[1 if body.embarked == "S" else 0]], dtype=np.int_)
 
-    prediction = np.concatenate((t0, t1, t2, t3, t4, t5, t6, t7, t8, ), axis=1)
+    prediction = np.concatenate((t0, t1, t2, t3, t4, t5, t6, t7, t8, ), axis=1).astype(np.float32)
 
+    input_name = model.get_inputs()[0].name
+    label_name = model.get_outputs()[0].name
+    prediction = model.run([label_name], {input_name: prediction})[0]
 
     return Output(prediction=prediction)

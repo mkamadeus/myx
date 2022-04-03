@@ -8,6 +8,13 @@ import (
 	"github.com/mkamadeus/myx/pkg/template/api"
 )
 
+var bodyTypeMapper = map[string]string{
+	"float":       "float",
+	"int":         "int",
+	"categorical": "str",
+	"string":      "str",
+}
+
 func RenderSpec(s *spec.MyxSpec) (string, error) {
 	// input
 	logger.Logger.Instance.Info("rendered input specification")

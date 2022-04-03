@@ -14,5 +14,5 @@ app = FastAPI()
 async def root({{.InputCode.Body}}):
 {{range .PipelineCode.Pipelines}}    {{.}}{{end}}
     {{.PipelineCode.Aggregation}}
-
+    {{.ModelCode.Prediction}}
     return {{.OutputCode.Prediction}}
