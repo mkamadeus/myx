@@ -3,7 +3,10 @@ package tabular
 import (
 	"bytes"
 	_ "embed"
+	"strings"
 	"text/template"
+
+	"github.com/mkamadeus/myx/pkg/utils"
 )
 
 //go:embed tabular_onehot.template
@@ -16,7 +19,7 @@ type TabularOneHotValues struct {
 	NumpyType string
 }
 
-func GenerateTabularOneHotCode(values *TabularOneHotValues) (string, error) {
+func GenerateTabularOneHotCode(values *TabularOneHotValues) ([]string, error) {
 	t, err := template.New("tabular_onehot").Parse(TabularOneHotTemplate)
 	if err != nil {
 		panic(err)
@@ -27,5 +30,5 @@ func GenerateTabularOneHotCode(values *TabularOneHotValues) (string, error) {
 		panic(err)
 	}
 
-	return buf.String(), nil
+	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
 }

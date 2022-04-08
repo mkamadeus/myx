@@ -3,7 +3,10 @@ package pipeline
 import (
 	"bytes"
 	_ "embed"
+	"strings"
 	"text/template"
+
+	"github.com/mkamadeus/myx/pkg/utils"
 )
 
 //go:embed aggregation.template
@@ -13,7 +16,7 @@ type PipelineAggregationValues struct {
 	PipelineVariables []string
 }
 
-func GeneratePipelineAggregationCode(values *PipelineAggregationValues) (string, error) {
+func GeneratePipelineAggregationCode(values *PipelineAggregationValues) ([]string, error) {
 	t, err := template.New("aggregation").Parse(PipelineAggregationTemplate)
 	if err != nil {
 		panic(err)
@@ -24,5 +27,5 @@ func GeneratePipelineAggregationCode(values *PipelineAggregationValues) (string,
 		panic(err)
 	}
 
-	return buf.String(), nil
+	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
 }

@@ -1,8 +1,8 @@
 package model
 
 type ModelCode struct {
-	Session    string
-	Prediction string
+	Session    []string
+	Prediction []string
 }
 
 func RenderKerasModelCode(sessionValues *ModelKerasBaseValues, predictionValues *ModelKerasPredictionValues) (*ModelCode, error) {

@@ -3,7 +3,10 @@ package tabular
 import (
 	"bytes"
 	_ "embed"
+	"strings"
 	"text/template"
+
+	"github.com/mkamadeus/myx/pkg/utils"
 )
 
 //go:embed tabular_normal.template
@@ -15,7 +18,7 @@ type TabularNormalValues struct {
 	NumpyType string
 }
 
-func GenerateTabularNormalCode(values *TabularNormalValues) (string, error) {
+func GenerateTabularNormalCode(values *TabularNormalValues) ([]string, error) {
 	t, err := template.New("tabular_normal").Parse(TabularNormalTemplate)
 	if err != nil {
 		panic(err)
@@ -26,5 +29,5 @@ func GenerateTabularNormalCode(values *TabularNormalValues) (string, error) {
 		panic(err)
 	}
 
-	return buf.String(), nil
+	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
 }

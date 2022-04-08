@@ -3,7 +3,10 @@ package tabular
 import (
 	"bytes"
 	_ "embed"
+	"strings"
 	"text/template"
+
+	"github.com/mkamadeus/myx/pkg/utils"
 )
 
 //go:embed tabular_scaled.template
@@ -16,7 +19,7 @@ type TabularScaledValues struct {
 	NumpyType string
 }
 
-func GenerateTabularScaledCode(values *TabularScaledValues) (string, error) {
+func GenerateTabularScaledCode(values *TabularScaledValues) ([]string, error) {
 	t, err := template.New("tabular_scaled").Parse(TabularScaledTemplate)
 	if err != nil {
 		panic(err)
@@ -27,5 +30,5 @@ func GenerateTabularScaledCode(values *TabularScaledValues) (string, error) {
 		panic(err)
 	}
 
-	return buf.String(), nil
+	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
 }

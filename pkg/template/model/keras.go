@@ -3,7 +3,10 @@ package model
 import (
 	"bytes"
 	_ "embed"
+	"strings"
 	"text/template"
+
+	"github.com/mkamadeus/myx/pkg/utils"
 )
 
 //go:embed model_keras_base.template
@@ -18,32 +21,32 @@ var ModelKerasPredictionTemplate string
 
 type ModelKerasPredictionValues struct{}
 
-func GenerateKerasBase(values *ModelKerasBaseValues) (string, error) {
+func GenerateKerasBase(values *ModelKerasBaseValues) ([]string, error) {
 	t, err := template.New("onnx_model_base").Parse(ModelKerasBaseTemplate)
 	if err != nil {
-		return "", nil
+		return nil, err
 	}
 
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, values)
 	if err != nil {
-		return "", nil
+		return nil, err
 	}
 
-	return buf.String(), nil
+	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
 }
 
-func GenerateKerasPrediction(values *ModelKerasPredictionValues) (string, error) {
+func GenerateKerasPrediction(values *ModelKerasPredictionValues) ([]string, error) {
 	t, err := template.New("onnx_model_prediction").Parse(ModelKerasPredictionTemplate)
 	if err != nil {
-		return "", nil
+		return nil, err
 	}
 
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, values)
 	if err != nil {
-		return "", nil
+		return nil, err
 	}
 
-	return buf.String(), nil
+	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
 }

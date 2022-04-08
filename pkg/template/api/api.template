@@ -5,14 +5,17 @@ import onnxruntime as rt
 import numpy as np
 
 app = FastAPI()
-{{.ModelCode.Session}}
+{{range .ModelCode.Session}}{{.}}{{end}}
 
 {{.InputCode.Type}}
 {{.OutputCode.Type}}
 
 @app.post('/')
 async def root({{.InputCode.Body}}):
-{{range .PipelineCode.Pipelines}}    {{.}}{{end}}
-    {{.PipelineCode.Aggregation}}
-    {{.ModelCode.Prediction}}
+{{range .PipelineCode.Pipelines}}{{range .}}    {{.}}
+{{end}}{{end}}
+{{range .PipelineCode.Aggregation}}    {{.}}
+{{end}}
+{{range .ModelCode.Prediction}}    {{.}}
+{{end}}
     return {{.OutputCode.Prediction}}

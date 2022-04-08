@@ -8,13 +8,13 @@ import (
 )
 
 type PipelineCode struct {
-	Pipelines   []string
-	Aggregation string
+	Pipelines   [][]string
+	Aggregation []string
 }
 
 // TODO: interface{} fix
 func RenderTabularPipelineCode(pipelineValues []interface{}, aggregationValues *PipelineAggregationValues) (*PipelineCode, error) {
-	pipelines := make([]string, 0)
+	pipelines := make([][]string, 0)
 	for _, val := range pipelineValues {
 		pipelineType := reflect.TypeOf(val).String()
 		if pipelineType == "*tabular.TabularNormalValues" {
