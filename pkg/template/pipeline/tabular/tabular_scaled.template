@@ -1,2 +1,1 @@
-scaler = joblib.load('{{.Path}}')
-t{{.Index}} =  scaler.transform(np.array([[body.{{.Name}}]], dtype={{.NumpyType}}))
+t{{.Index}} =  np.array([[scaled[0,]]], dtype={{.NumpyType}})

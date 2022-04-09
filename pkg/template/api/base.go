@@ -24,12 +24,12 @@ type APIValues struct {
 func RenderAPICode(values *APIValues) (string, error) {
 	t, err := template.New("api_code").Parse(APICode)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, values)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return buf.String(), nil

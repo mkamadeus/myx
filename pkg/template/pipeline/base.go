@@ -9,6 +9,7 @@ import (
 
 type PipelineCode struct {
 	Pipelines   [][]string
+	Sessions    [][]string
 	Aggregation []string
 }
 

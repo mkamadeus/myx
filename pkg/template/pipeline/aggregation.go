@@ -19,12 +19,12 @@ type PipelineAggregationValues struct {
 func GeneratePipelineAggregationCode(values *PipelineAggregationValues) ([]string, error) {
 	t, err := template.New("aggregation").Parse(PipelineAggregationTemplate)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, values)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil

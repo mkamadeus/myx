@@ -3,22 +3,16 @@ package generator
 import (
 	_ "embed"
 
+	"github.com/mkamadeus/myx/pkg/generator/input"
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/spec"
 	"github.com/mkamadeus/myx/pkg/template/api"
 )
 
-var bodyTypeMapper = map[string]string{
-	"float":       "float",
-	"int":         "int",
-	"categorical": "str",
-	"string":      "str",
-}
-
 func RenderSpec(s *spec.MyxSpec) (string, error) {
 	// input
 	logger.Logger.Instance.Info("rendered input specification")
-	inputSpec, err := RenderInputSpec(s)
+	inputSpec, err := input.RenderInputSpec(s)
 	if err != nil {
 		return "", err
 	}

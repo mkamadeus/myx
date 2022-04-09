@@ -22,12 +22,12 @@ type TabularInputBodyValues struct{}
 func GenerateTabularInputTypeCode(values []*TabularInputTypeValues) (string, error) {
 	t, err := template.New("input").Parse(TabularInputTypeTemplate)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, values)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return buf.String(), nil
@@ -36,12 +36,12 @@ func GenerateTabularInputTypeCode(values []*TabularInputTypeValues) (string, err
 func GenerateTabularInputBodyCode(values *TabularInputBodyValues) (string, error) {
 	t, err := template.New("input").Parse(TabularInputBodyTemplate)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, values)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return buf.String(), nil
