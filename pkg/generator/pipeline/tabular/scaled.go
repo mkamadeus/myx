@@ -13,3 +13,10 @@ func ScaleModule(input map[string]interface{}, pipelineData *spec.Pipeline) *tab
 		NumpyType: models.NumpyTypeMapper[input["type"].(string)],
 	}
 }
+
+func ScaleSession(pipelineData *spec.Pipeline) *tabular.TabularScalerValues {
+	return &tabular.TabularScalerValues{
+		Names: pipelineData.Metadata["target"].([]string),
+		Path:  pipelineData.Metadata["path"].(string),
+	}
+}

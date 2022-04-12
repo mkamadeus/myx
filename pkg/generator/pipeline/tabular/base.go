@@ -5,18 +5,20 @@ import (
 	"sort"
 
 	"github.com/mkamadeus/myx/pkg/logger"
-	"github.com/mkamadeus/myx/pkg/models"
 	"github.com/mkamadeus/myx/pkg/spec"
 	"github.com/mkamadeus/myx/pkg/template/pipeline"
-	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
 )
-
-var TabularModules = map[string]func(map[string]interface{}, *spec.Pipeline) *tabular.TabularScaledValues{
-	"preprocessing/scale": ScaleModule,
-}
 
 func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) {
 	logger.Logger.Instance.Debug("running in tabular input mode")
+
+	// find sessions
+	for _, p := range s.Pipeline {
+		if p.Module == "preprocessing/scale" {
+			values := ScaleSession(&p)
+			code, err := pipeline.RenderTabularPipelineSession(values)
+		}
+	}
 
 	// map input in temporary buffer
 	inputMapper := make(map[int]interface{})
@@ -26,11 +28,7 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 		// if input is not preprocessed
 		if input["preprocessed"] == nil || input["preprocessed"] == false {
 			logger.Logger.Instance.Debugf("direct input %v", input)
-			inputMapper[input["target"].(int)] = &tabular.TabularNormalValues{
-				Index:     input["target"].(int),
-				Name:      input["name"].(string),
-				NumpyType: models.NumpyTypeMapper[input["type"].(string)],
-			}
+			inputMapper[input["target"].(int)] = DirectModule(input)
 		} else {
 			// else when input is preprocessed
 			logger.Logger.Instance.Debugf("preprocessed input %v, detecting module", input)
@@ -39,19 +37,13 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 				if p.Metadata["for"] == input["name"] {
 					logger.Logger.Instance.Debugf("using %s for input", p.Module)
 
-					moduleFunc, ok := TabularModules[p.Module]
-					if !ok {
-						logger.Logger.Instance.Debug("module not found")
-						return nil, fmt.Errorf("invalid module found")
-					}
-
-					inputMapper[p.Metadata["target"].(int)] = moduleFunc(input, &p)
-
 					if p.Module == "preprocessing/scale" {
-
 						inputMapper[p.Metadata["target"].(int)] = ScaleModule(input, &p)
 					} else if p.Module == "preprocessing/onehot" {
-
+						result := OneHotModule(input, &p)
+						for _, r := range result {
+							inputMapper[r.Index] = r
+						}
 					} else {
 						logger.Logger.Instance.Debug("module not found")
 						return nil, fmt.Errorf("invalid module found")

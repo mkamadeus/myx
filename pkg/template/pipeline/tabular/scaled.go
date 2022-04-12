@@ -27,7 +27,7 @@ type TabularScalerValues struct {
 	Path  string
 }
 
-func GenerateTabularScaledCode(values *TabularScaledValues) ([]string, []string, error) {
+func GenerateTabularScaledCode(values *TabularScaledValues) ([]string, error) {
 	t, err := template.New("tabular_scaled").Parse(TabularScaledTemplate)
 	if err != nil {
 		return nil, err
@@ -38,8 +38,11 @@ func GenerateTabularScaledCode(values *TabularScaledValues) ([]string, []string,
 		return nil, err
 	}
 
-	utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
+	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
 
+}
+
+func GenerateTabularScalerCode(values *TabularScalerValues) ([]string, error) {
 	t, err := template.New("tabular_scaler").Parse(TabularScalerTemplate)
 	if err != nil {
 		return nil, err
@@ -51,7 +54,4 @@ func GenerateTabularScaledCode(values *TabularScaledValues) ([]string, []string,
 	}
 
 	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
-}
-
-func GenerateTabularScalerCode(values *TabularScalerValues) ([]string, error) {
 }

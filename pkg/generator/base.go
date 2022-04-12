@@ -4,6 +4,7 @@ import (
 	_ "embed"
 
 	"github.com/mkamadeus/myx/pkg/generator/input"
+	"github.com/mkamadeus/myx/pkg/generator/pipeline"
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/spec"
 	"github.com/mkamadeus/myx/pkg/template/api"
@@ -12,41 +13,41 @@ import (
 func RenderSpec(s *spec.MyxSpec) (string, error) {
 	// input
 	logger.Logger.Instance.Info("rendered input specification")
-	inputSpec, err := input.RenderInputSpec(s)
+	inputCode, err := input.RenderInputSpec(s)
 	if err != nil {
 		return "", err
 	}
-	logger.Logger.Instance.Debug(inputSpec)
+	logger.Logger.Instance.Debug(inputCode)
 
 	// output
 	logger.Logger.Instance.Info("rendered output specification")
-	outputSpec, err := RenderOutputSpec(s)
+	outputCode, err := RenderOutputSpec(s)
 	if err != nil {
 		return "", err
 	}
-	logger.Logger.Instance.Debug(outputSpec)
+	logger.Logger.Instance.Debug(outputCode)
 
 	// model
 	logger.Logger.Instance.Info("rendered model specification")
-	modelSpec, err := RenderModelSpec(s)
+	modelCode, err := RenderModelSpec(s)
 	if err != nil {
 		return "", err
 	}
-	logger.Logger.Instance.Debug(modelSpec)
+	logger.Logger.Instance.Debug(modelCode)
 
 	// pipeline
-	pipelineSpec, err := RenderPipelineSpec(s)
+	pipelineCode, err := pipeline.RenderPipelineSpec(s)
 	if err != nil {
 		return "", err
 	}
 	logger.Logger.Instance.Info("rendered pipeline specification")
-	logger.Logger.Instance.Debug(pipelineSpec)
+	logger.Logger.Instance.Debug(pipelineCode)
 
 	values := &api.APIValues{
-		InputCode:    inputSpec,
-		OutputCode:   outputSpec,
-		PipelineCode: pipelineSpec,
-		ModelCode:    modelSpec,
+		InputCode:    inputCode,
+		OutputCode:   outputCode,
+		PipelineCode: pipelineCode,
+		ModelCode:    modelCode,
 	}
 	apiCode, err := api.RenderAPICode(values)
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
 )
 
-func OneHotModule(input map[string]interface{}, pipelineData *spec.Pipeline) *tabular.TabularOneHotValues {
+func OneHotModule(input map[string]interface{}, pipelineData *spec.Pipeline) []*tabular.TabularOneHotValues {
 	values := pipelineData.Metadata["values"].([]interface{})
 	onehotValues := make([]string, len(values))
 	for ival, val := range values {
@@ -19,12 +19,15 @@ func OneHotModule(input map[string]interface{}, pipelineData *spec.Pipeline) *ta
 		onehotTargets[itar] = tar.(int)
 	}
 
+	result := make([]*tabular.TabularOneHotValues, 0)
 	for ival := range onehotValues {
-		inputMapper[onehotTargets[ival]] = &tabular.TabularOneHotValues{
+		result = append(result, &tabular.TabularOneHotValues{
 			Index:     onehotTargets[ival],
 			Name:      input["name"].(string),
 			NumpyType: models.NumpyTypeMapper[input["type"].(string)],
 			Value:     onehotValues[ival],
-		}
+		})
 	}
+
+	return result
 }
