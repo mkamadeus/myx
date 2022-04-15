@@ -15,8 +15,7 @@ var TabularScaledTemplate string
 type TabularScaledValues struct {
 	Index     int
 	Name      string
-	Target    int
-	NumpyType string
+	Position  int
 }
 
 //go:embed tabular_scaler.template

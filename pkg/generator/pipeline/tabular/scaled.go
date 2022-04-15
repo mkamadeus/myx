@@ -1,22 +1,44 @@
 package tabular
 
 import (
-	"github.com/mkamadeus/myx/pkg/models"
-	"github.com/mkamadeus/myx/pkg/spec"
 	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
 )
 
-func ScaleModule(input map[string]interface{}, pipelineData *spec.Pipeline) *tabular.TabularScaledValues {
-	return &tabular.TabularScaledValues{
-		Index:     pipelineData.Metadata["target"].(int),
-		Name:      input["name"].(string),
-		NumpyType: models.NumpyTypeMapper[input["type"].(string)],
-	}
+type ScaleModule struct {
+	Path string
+	Names []string
+	Targets []int
 }
 
-func ScaleSession(pipelineData *spec.Pipeline) *tabular.TabularScalerValues {
-	return &tabular.TabularScalerValues{
-		Names: pipelineData.Metadata["target"].([]string),
-		Path:  pipelineData.Metadata["path"].(string),
+func (module *ScaleModule) Run() ([]string, error) {
+	result := make([]string, 0);
+
+	// make scaler code once
+	values := &tabular.TabularScalerValues{
+		Names: module.Names,
+		Path:  module.Path,
 	}
+	scalerCode, err := tabular.GenerateTabularScalerCode(values)
+	if err != nil {
+		return nil, err
+	}
+	result = append(result, scalerCode...)
+	
+	// map scaler result to each 
+	for it := range module.Targets {
+		values := &tabular.TabularScaledValues{
+			Index:     module.Targets[it],
+			Name:      module.Names[it],
+			Position:  it,
+		}
+		code, err := tabular.GenerateTabularScaledCode(values)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, code...)
+
+	}
+
+	return result, nil
+
 }

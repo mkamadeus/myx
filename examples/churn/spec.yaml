@@ -31,10 +31,10 @@ input:
       preprocessed: true
     - name: has_credit_card
       type: int
-      preprocessed: true
+      target: 9
     - name: is_active_member
       type: int
-      preprocessed: true
+      target: 10
     - name: estimated_salary
       type: float
       preprocessed: true
@@ -44,8 +44,16 @@ output:
 pipeline:
   - module: preprocessing/scale
     meta:
-      for: []
-      target: []
+      for:
+        [
+          "credit_score",
+          "age",
+          "tenure",
+          "balance",
+          "num_of_products",
+          "estimated_salary",
+        ]
+      target: [0, 5, 6, 7, 8, 11]
       path: churn.scaler
   - module: preprocessing/onehot
     meta:

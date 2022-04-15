@@ -16,7 +16,6 @@ type TabularOneHotValues struct {
 	Index     int
 	Name      string
 	Value     string
-	NumpyType string
 }
 
 func GenerateTabularOneHotCode(values *TabularOneHotValues) ([]string, error) {

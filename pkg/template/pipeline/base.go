@@ -8,12 +8,10 @@ import (
 )
 
 type PipelineCode struct {
-	Pipelines   [][]string
+	Pipelines   []string
 	Aggregation []string
 }
-type PipelineSessionCode struct {
-	Sessions [][]string
-}
+
 
 // TODO: interface{} fix
 func RenderTabularPipelineCode(pipelineValues []interface{}, aggregationValues *PipelineAggregationValues) (*PipelineCode, error) {
@@ -57,23 +55,23 @@ func RenderTabularPipelineCode(pipelineValues []interface{}, aggregationValues *
 	}, nil
 }
 
-func RenderTabularPipelineSession(sessionValues []interface{}) (*PipelineSessionCode, error) {
-	sessions := make([][]string, 0)
-	for _, val := range sessionValues {
-		sessionType := reflect.TypeOf(val).String()
-		if sessionType == "*tabular.TabularScalerValues" {
-			casted := val.(*tabular.TabularScalerValues)
-			code, err := tabular.GenerateTabularScalerCode(casted)
-			if err != nil {
-				return nil, err
-			}
-			sessions = append(sessions, code)
-		} else {
-			return nil, fmt.Errorf("invalid session type %s found", sessionType)
-		}
-	}
+// func RenderTabularPipelineSession(sessionValues []interface{}) (*PipelineSessionCode, error) {
+// 	sessions := make([][]string, 0)
+// 	for _, val := range sessionValues {
+// 		sessionType := reflect.TypeOf(val).String()
+// 		if sessionType == "*tabular.TabularScalerValues" {
+// 			casted := val.(*tabular.TabularScalerValues)
+// 			code, err := tabular.GenerateTabularScalerCode(casted)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			sessions = append(sessions, code)
+// 		} else {
+// 			return nil, fmt.Errorf("invalid session type %s found", sessionType)
+// 		}
+// 	}
 
-	return &PipelineSessionCode{
-		Sessions: sessions,
-	}, nil
-}
+// 	return &PipelineSessionCode{
+// 		Sessions: sessions,
+// 	}, nil
+// }

@@ -25,8 +25,8 @@ output:
 pipeline:
   - module: preprocessing/scale
     meta:
-      for: age
-      target: 3
+      for: ["age"]
+      target: [3]
       path: age.scaler
   - module: preprocessing/onehot
     meta:
