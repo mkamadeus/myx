@@ -23,16 +23,17 @@ class Output(BaseModel):
 
 @app.post('/')
 async def root(body: Input):
-    t0 =  np.array([[body.pclass]], dtype=np.int_)
-    t1 =  np.array([[body.sibsp]], dtype=np.int_)
-    t2 =  np.array([[body.parch]], dtype=np.int_)
-    scaler = joblib.load('age.scaler')
-    t3 =  scaler.transform(np.array([[body.age]], dtype=np.float32))
-    t4 =  np.array([[1 if body.gender == "M" else 0]], dtype=np.int_)
-    t5 =  np.array([[1 if body.gender == "F" else 0]], dtype=np.int_)
-    t6 =  np.array([[1 if body.embarked == "C" else 0]], dtype=np.int_)
-    t7 =  np.array([[1 if body.embarked == "Q" else 0]], dtype=np.int_)
-    t8 =  np.array([[1 if body.embarked == "S" else 0]], dtype=np.int_)
+    t0 =  np.array([[body.pclass]])
+    t1 =  np.array([[body.sibsp]])
+    t2 =  np.array([[body.parch]])
+    scaler_age = joblib.load('age.scaler')
+    scaled =  scaler_age.transform(np.array([[body.age,]]}))
+    t3 =  np.array([[ scaled[0] ]])
+    t4 =  np.array([[1 if body.gender == "M" else 0]])
+    t5 =  np.array([[1 if body.gender == "F" else 0]])
+    t6 =  np.array([[1 if body.embarked == "C" else 0]])
+    t7 =  np.array([[1 if body.embarked == "Q" else 0]])
+    t8 =  np.array([[1 if body.embarked == "S" else 0]])
 
     prediction = np.concatenate((t0, t1, t2, t3, t4, t5, t6, t7, t8, ), axis=1).astype(np.float32)
 

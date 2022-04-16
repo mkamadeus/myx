@@ -5,7 +5,7 @@ import onnxruntime as rt
 import numpy as np
 
 app = FastAPI()
-model = rt.InferenceSession("titanic.onnx")
+model = load_model(churn.h5)
 
 class Input(BaseModel):
 	credit_score : float
@@ -26,13 +26,25 @@ class Output(BaseModel):
 
 @app.post('/')
 async def root(body: Input):
-    t4 =  np.array([[1 if body.gender == "M" else 0]], dtype=np.int_)
-    t5 =  np.array([[1 if body.gender == "F" else 0]], dtype=np.int_)
+    t9 =  np.array([[body.has_credit_card]])
+    t10 =  np.array([[body.is_active_member]])
+    scaler_credit_score_age_tenure_balance_num_of_products_estimated_salary = joblib.load('churn.scaler')
+    scaled =  scaler_credit_score_age_tenure_balance_num_of_products_estimated_salary.transform(np.array([[body.credit_score,body.age,body.tenure,body.balance,body.num_of_products,body.estimated_salary,]]}))
+    t0 =  np.array([[ scaled[0] ]])
+    t5 =  np.array([[ scaled[1] ]])
+    t6 =  np.array([[ scaled[2] ]])
+    t7 =  np.array([[ scaled[3] ]])
+    t8 =  np.array([[ scaled[4] ]])
+    t11 =  np.array([[ scaled[5] ]])
+    t1 =  np.array([[1 if body.geography == "Germany" else 0]])
+    t2 =  np.array([[1 if body.geography == "Spain" else 0]])
+    t3 =  np.array([[1 if body.geography == "France" else 0]])
+    labeller_gender = joblib.load('geo.encoder')
+    labelled =  scaler_gender.transform(np.array([[body.gender,]]}))
+    t4 =  np.array([[ labelled[0] ]])
 
-    prediction = np.concatenate((t0, t1, ), axis=1).astype(np.float32)
+    prediction = np.concatenate((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, ), axis=1).astype(np.float32)
 
-    input_name = model.get_inputs()[0].name
-    label_name = model.get_outputs()[0].name
-    prediction = model.run([label_name], {input_name: prediction})[0]
+    prediction = model.predict(x=result).tolist()[0]
 
     return Output(prediction=prediction)

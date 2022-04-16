@@ -2,6 +2,7 @@ package tabular
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/spec"
@@ -15,8 +16,9 @@ type TabularPipelineModule interface {
 func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) {
 	logger.Logger.Instance.Debug("running in tabular input mode")
 
-	// map input in temporary buffer
+	// map input in temporary buffer, save targets
 	inputMapper := make([]TabularPipelineModule, 0)
+	targetsMapper := make([]int, 0)
 
 	logger.Logger.Instance.Info("mapping input in temporary buffer")
 	for _, input := range s.Input.Metadata {
@@ -24,47 +26,80 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 		if input["preprocessed"] == nil || input["preprocessed"] == false {
 			logger.Logger.Instance.Debugf("direct input %v", input)
 
-			// make module for direct input, run
+			// make module for direct input
 			module := &DirectModule{
 				Target: input["target"].(int),
+				Name: input["name"].(string),
 			}
 			inputMapper = append(inputMapper, module)
-		} else {
-			// else when input is preprocessed
-			logger.Logger.Instance.Debugf("preprocessed input %v, detecting module", input)
-			for _, p := range s.Pipeline {
+			targetsMapper = append(targetsMapper, module.Target)
+			
+		}
+	}
+	
+	// for each module
+	for _, p := range s.Pipeline {
+		logger.Logger.Instance.Debug(p)
 
-				// find the preprocessing module
-				if p.Metadata["for"] == input["name"] {
-					logger.Logger.Instance.Debugf("using %s for input", p.Module)
-
-					if p.Module == "preprocessing/scale" {
-
-						// add module to mapper
-						module := &ScaleModule{
-							Names: p.Metadata["for"].([]string),
-							Targets: p.Metadata["target"].([]int),
-							Path: p.Metadata["path"].(string),
-						}
-						inputMapper = append(inputMapper, module)
-					} else if p.Module == "preprocessing/onehot" {
-						// add module to mapper
-						module := &OneHotModule{
-							Name: p.Metadata["for"].(string),
-							Targets: p.Metadata["target"].([]int),
-							Values: p.Metadata["values"].([]string),
-						}
-						inputMapper = append(inputMapper, module)
-					} else {
-						logger.Logger.Instance.Debug("module not found")
-						return nil, fmt.Errorf("invalid module found")
-					}
-
-				}
+		// find the preprocessing module
+		if p.Module == "preprocessing/scale" {
+			// add module to mapper
+			names := make([]string, 0)
+			for _, n := range p.Metadata["for"].([]interface{}) {
+				names = append(names, n.(string))
+			}
+			targets := make([]int, 0)
+			for _, t := range p.Metadata["target"].([]interface{}) {
+				targets = append(targets, t.(int))
 			}
 
-		}
+			module := &ScaleModule{
+				Names: names,
+				Targets: targets,
+				Path: p.Metadata["path"].(string),
+			}
+			inputMapper = append(inputMapper, module)
+			targetsMapper = append(targetsMapper, module.Targets...)
+		} else if p.Module == "preprocessing/onehot" {
+			// add module to mapper
+			values := make([]string, 0)
+			for _, n := range p.Metadata["values"].([]interface{}) {
+				values = append(values, n.(string))
+			}
+			targets := make([]int, 0)
+			for _, t := range p.Metadata["target"].([]interface{}) {
+				targets = append(targets, t.(int))
+			}
 
+			module := &OneHotModule{
+				Name: p.Metadata["for"].(string),
+				Targets: targets,
+				Values: values,
+			}
+			inputMapper = append(inputMapper, module)
+			targetsMapper = append(targetsMapper, module.Targets...)
+		} else if p.Module == "preprocessing/label" {
+			// add module to mapper
+			names := make([]string, 0)
+			for _, n := range p.Metadata["for"].([]interface{}) {
+				names = append(names, n.(string))
+			}
+			targets := make([]int, 0)
+			for _, t := range p.Metadata["target"].([]interface{}) {
+				targets = append(targets, t.(int))
+			}
+
+			module := &LabelModule{
+				Names: names,
+				Targets: targets,
+				Path: p.Metadata["path"].(string),
+			}
+			inputMapper = append(inputMapper, module)
+			targetsMapper = append(targetsMapper, module.Targets...)
+		} else {
+			logger.Logger.Instance.Debug("module not found")
+			return nil, fmt.Errorf("invalid module found")
+		}
 	}
 
 	// map buffer to actual code
@@ -78,9 +113,25 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 		}
 
 		pipelineCodes = append(pipelineCodes, c...)
+		logger.Logger.Instance.Debug(pipelineCodes)
 	}
 
-	
+	// aggregation code
+	variables := make([]string, len(targetsMapper))
+	sort.Ints(targetsMapper)
+	for it, t := range targetsMapper {
+		variables[it] = fmt.Sprintf("%d", t)
+	}
 
-	return code, nil
+	aggregationCode, err := pipeline.GeneratePipelineAggregationCode(&pipeline.PipelineAggregationValues{
+		PipelineVariables: variables,
+	})
+	if err != nil {
+		return nil, err
+	}
+	
+	return &pipeline.PipelineCode{
+		Pipelines: pipelineCodes,
+		Aggregation: aggregationCode,
+	}, nil
 }

@@ -4,21 +4,21 @@ import (
 	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
 )
 
-type ScaleModule struct {
+type LabelModule struct {
 	Path string
 	Names []string
 	Targets []int
 }
 
-func (module *ScaleModule) Run() ([]string, error) {
+func (module *LabelModule) Run() ([]string, error) {
 	result := make([]string, 0);
 
-	// make scaler code once
-	values := &tabular.TabularScalerValues{
+	// make label code once
+	values := &tabular.TabularLabellerValues{
 		Names: module.Names,
 		Path:  module.Path,
 	}
-	scalerCode, err := tabular.GenerateTabularScalerCode(values)
+	scalerCode, err := tabular.GenerateTabularLabellerCode(values)
 	if err != nil {
 		return nil, err
 	}
@@ -26,12 +26,12 @@ func (module *ScaleModule) Run() ([]string, error) {
 
 	// map scaler result to each 
 	for it := range module.Targets {
-		values := &tabular.TabularScaledValues{
+		values := &tabular.TabularLabelValues{
 			Index:     module.Targets[it],
 			Name:      module.Names[it],
 			Position:  it,
 		}
-		code, err := tabular.GenerateTabularScaledCode(values)
+		code, err := tabular.GenerateTabularLabelCode(values)
 		if err != nil {
 			return nil, err
 		}

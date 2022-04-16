@@ -12,8 +12,8 @@ app = FastAPI()
 
 @app.post('/')
 async def root({{.InputCode.Body}}):
-{{range .PipelineCode.Pipelines}}{{range .}}    {{.}}
-{{end}}{{end}}
+{{range .PipelineCode.Pipelines}}    {{.}}
+{{end}}
 {{range .PipelineCode.Aggregation}}    {{.}}
 {{end}}
 {{range .ModelCode.Prediction}}    {{.}}
