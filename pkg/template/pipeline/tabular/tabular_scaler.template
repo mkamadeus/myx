@@ -1,0 +1,2 @@
+scaler{{range .Names}}_{{.}}{{end}} = joblib.load('{{.Path}}')
+scaled =  scaler{{range .Names}}_{{.}}{{end}}.transform(np.array([[{{range .Names}}body.{{.}},{{end}}]]}))

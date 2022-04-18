@@ -1,4 +1,4 @@
-package generator
+package model
 
 import (
 	"fmt"
@@ -9,23 +9,19 @@ import (
 
 func RenderModelSpec(s *spec.MyxSpec) (*model.ModelCode, error) {
 	if s.Model.Format == "keras" {
-		kerasCode, err := model.RenderKerasModelCode(&model.ModelKerasBaseValues{
-			Path: s.Model.Path,
-		}, &model.ModelKerasPredictionValues{})
+		code, err := RenderKerasModelCode(s)
+
 		if err != nil {
 			return nil, err
 		}
-
-		return kerasCode, nil
+		return code, nil
 	} else if s.Model.Format == "onnx" {
-		onnxCode, err := model.RenderONNXModelCode(&model.ModelONNXBaseValues{
-			Path: s.Model.Path,
-		}, &model.ModelONNXPredictionValues{})
+		code, err := RenderONNXModelCode(s)
+
 		if err != nil {
 			return nil, err
 		}
-
-		return onnxCode, nil
+		return code, nil
 	}
 
 	return nil, fmt.Errorf("invalid model format %s found", s.Model.Format)

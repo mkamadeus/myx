@@ -9,17 +9,15 @@ import (
 	"github.com/mkamadeus/myx/pkg/utils"
 )
 
-//go:embed tabular_normal.template
-var TabularNormalTemplate string
+//go:embed tabular_aggregation.template
+var TabularAggregationTemplate string
 
-type TabularNormalValues struct {
-	Index     int
-	Name      string
-	NumpyType string
+type TabularAggregationValues struct {
+	Variables []string
 }
 
-func GenerateTabularNormalCode(values *TabularNormalValues) ([]string, error) {
-	t, err := template.New("tabular_normal").Parse(TabularNormalTemplate)
+func GenerateTabularAggregationCode(values *TabularAggregationValues) ([]string, error) {
+	t, err := template.New("tabularaggregation").Parse(TabularAggregationTemplate)
 	if err != nil {
 		return nil, err
 	}

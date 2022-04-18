@@ -1,4 +1,4 @@
-package generator
+package output
 
 import (
 	"github.com/mkamadeus/myx/pkg/spec"

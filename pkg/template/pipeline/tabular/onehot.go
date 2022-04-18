@@ -16,18 +16,18 @@ type TabularOneHotValues struct {
 	Index     int
 	Name      string
 	Value     string
-	NumpyType string
+	TargetValue int
 }
 
 func GenerateTabularOneHotCode(values *TabularOneHotValues) ([]string, error) {
 	t, err := template.New("tabular_onehot").Parse(TabularOneHotTemplate)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, values)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil

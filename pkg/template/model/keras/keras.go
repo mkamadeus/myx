@@ -1,4 +1,4 @@
-package model
+package keras
 
 import (
 	"bytes"
