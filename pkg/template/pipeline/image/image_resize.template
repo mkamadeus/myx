@@ -1,0 +1,5 @@
+import io
+from PIL import Image
+stream = io.BytesIO(contents)
+img = Image.open(stream)
+img = img.resize(({{.Height}},{{.Width}}))

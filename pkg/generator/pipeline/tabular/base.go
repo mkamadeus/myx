@@ -7,6 +7,7 @@ import (
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/spec"
 	"github.com/mkamadeus/myx/pkg/template/pipeline"
+	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
 )
 
 type TabularPipelineModule interface {
@@ -29,14 +30,14 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 			// make module for direct input
 			module := &DirectModule{
 				Target: input["target"].(int),
-				Name: input["name"].(string),
+				Name:   input["name"].(string),
 			}
 			inputMapper = append(inputMapper, module)
 			targetsMapper = append(targetsMapper, module.Target)
-			
+
 		}
 	}
-	
+
 	// for each module
 	for _, p := range s.Pipeline {
 		logger.Logger.Instance.Debug(p)
@@ -54,9 +55,9 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 			}
 
 			module := &ScaleModule{
-				Names: names,
+				Names:   names,
 				Targets: targets,
-				Path: p.Metadata["path"].(string),
+				Path:    p.Metadata["path"].(string),
 			}
 			inputMapper = append(inputMapper, module)
 			targetsMapper = append(targetsMapper, module.Targets...)
@@ -72,9 +73,9 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 			}
 
 			module := &OneHotModule{
-				Name: p.Metadata["for"].(string),
+				Name:    p.Metadata["for"].(string),
 				Targets: targets,
-				Values: values,
+				Values:  values,
 			}
 			inputMapper = append(inputMapper, module)
 			targetsMapper = append(targetsMapper, module.Targets...)
@@ -90,9 +91,9 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 			}
 
 			module := &LabelModule{
-				Names: names,
+				Names:   names,
 				Targets: targets,
-				Path: p.Metadata["path"].(string),
+				Path:    p.Metadata["path"].(string),
 			}
 			inputMapper = append(inputMapper, module)
 			targetsMapper = append(targetsMapper, module.Targets...)
@@ -123,15 +124,15 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 		variables[it] = fmt.Sprintf("%d", t)
 	}
 
-	aggregationCode, err := pipeline.GeneratePipelineAggregationCode(&pipeline.PipelineAggregationValues{
-		PipelineVariables: variables,
+	aggregationCode, err := tabular.GenerateTabularAggregationCode(&tabular.TabularAggregationValues{
+		Variables: variables,
 	})
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &pipeline.PipelineCode{
-		Pipelines: pipelineCodes,
+		Pipelines:   pipelineCodes,
 		Aggregation: aggregationCode,
 	}, nil
 }
