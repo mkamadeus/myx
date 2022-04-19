@@ -1,4 +1,4 @@
-package image
+package pipeline
 
 import (
 	"fmt"
@@ -10,11 +10,11 @@ import (
 )
 
 type ImagePipelineModule interface {
-	Run() ([]string, error)	
+	Run() ([]string, error)
 }
 
 // TODO: image pipeline
-func RenderImagePipelineSpec(s * spec.MyxSpec) (*pipeline.PipelineCode, error) {
+func RenderImagePipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) {
 	logger.Logger.Instance.Debug("running in image input mode")
 
 	// map input in temporary buffer, save targets
@@ -42,7 +42,7 @@ func RenderImagePipelineSpec(s * spec.MyxSpec) (*pipeline.PipelineCode, error) {
 			}
 
 			module := &ResizeModule{
-				Width: p.Metadata["width"].(int),
+				Width:  p.Metadata["width"].(int),
 				Height: p.Metadata["height"].(int),
 			}
 			inputMapper = append(inputMapper, module)
@@ -69,8 +69,8 @@ func RenderImagePipelineSpec(s * spec.MyxSpec) (*pipeline.PipelineCode, error) {
 	// aggregation code
 
 	aggregationCode, err := image.GenerateImageAggregationCode(&image.ImageAggregationValues{
-		Width: s.Input.Metadata["width"].(int),
-		Height: s.Input.Metadata["height"].(int),
+		Width:   s.Input.Metadata["width"].(int),
+		Height:  s.Input.Metadata["height"].(int),
 		Channel: s.Input.Metadata["channel"].(int),
 	})
 	if err != nil {
