@@ -3,7 +3,7 @@ package input
 import (
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/models"
-	"github.com/mkamadeus/myx/pkg/spec"
+	"github.com/mkamadeus/myx/pkg/models/spec"
 	"github.com/mkamadeus/myx/pkg/template/input"
 	"github.com/mkamadeus/myx/pkg/template/input/tabular"
 )

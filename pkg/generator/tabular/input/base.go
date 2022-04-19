@@ -3,7 +3,7 @@ package input
 import (
 	"fmt"
 
-	"github.com/mkamadeus/myx/pkg/spec"
+	"github.com/mkamadeus/myx/pkg/models/spec"
 	"github.com/mkamadeus/myx/pkg/template/input"
 )
 

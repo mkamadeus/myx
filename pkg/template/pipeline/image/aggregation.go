@@ -2,23 +2,23 @@ package image
 
 import (
 	"bytes"
-	_ "embed"
 	"strings"
 	"text/template"
 
 	"github.com/mkamadeus/myx/pkg/utils"
 )
 
-//go:embed image_resize.template
-var ImageResizeTemplate string
+//go:embed image_aggregation.template
+var ImageAggregationTemplate string
 
-type ImageResizeValues struct {
+type ImageAggregationValues struct {
+	Width int
 	Height int
-	Width  int
+	Channel int
 }
 
-func GenerateImageResizeCode(values *ImageResizeValues) ([]string, error) {
-	t, err := template.New("image_resize").Parse(ImageResizeTemplate)
+func GenerateImageAggregationCode(values *ImageAggregationValues) ([]string, error) {
+	t, err := template.New("image_aggregation").Parse(ImageResizeTemplate)
 	if err != nil {
 		return nil, err
 	}

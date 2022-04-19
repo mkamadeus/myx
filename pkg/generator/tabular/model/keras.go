@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/mkamadeus/myx/pkg/spec"
+	"github.com/mkamadeus/myx/pkg/models/spec"
 	"github.com/mkamadeus/myx/pkg/template/model"
 	"github.com/mkamadeus/myx/pkg/template/model/keras"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/mkamadeus/myx/pkg/generator/pipeline/tabular"
-	"github.com/mkamadeus/myx/pkg/spec"
+	"github.com/mkamadeus/myx/pkg/models/spec"
 	"github.com/mkamadeus/myx/pkg/template/pipeline"
 )
 

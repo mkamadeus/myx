@@ -9,7 +9,7 @@ import (
 	"github.com/mkamadeus/myx/pkg/config"
 	"github.com/mkamadeus/myx/pkg/generator"
 	"github.com/mkamadeus/myx/pkg/logger"
-	"github.com/mkamadeus/myx/pkg/spec"
+	"github.com/mkamadeus/myx/pkg/models/spec"
 	"github.com/mkamadeus/myx/pkg/template/code"
 	"github.com/spf13/cobra"
 )
