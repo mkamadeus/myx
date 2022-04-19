@@ -1,4 +1,4 @@
-package spec
+package models
 
 type MyxSpec struct {
 	Input     InputSpec     `yaml:"input"`
@@ -9,7 +9,7 @@ type MyxSpec struct {
 }
 
 type InputSpec struct {
-	Format   string                   `yaml:"format"`
+	Format   string                      `yaml:"format"`
 	Metadata map[interface{}]interface{} `yaml:"meta"`
 }
 
@@ -28,7 +28,7 @@ type ModelSpec struct {
 type PipelineSpec []Pipeline
 
 type Pipeline struct {
-	Module   string                 `yaml:"module"`
+	Module   string                      `yaml:"module"`
 	Metadata map[interface{}]interface{} `yaml:"meta"`
 }
 
@@ -38,4 +38,3 @@ type Interface struct {
 	Type string `yaml:"type"`
 	Port string `yaml:"port"`
 }
-

@@ -4,33 +4,30 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/mkamadeus/myx/pkg/generator"
+	"github.com/mkamadeus/myx/pkg/generator/tabular/pipeline"
 	"github.com/mkamadeus/myx/pkg/logger"
-	"github.com/mkamadeus/myx/pkg/models/spec"
-	"github.com/mkamadeus/myx/pkg/template/pipeline"
 	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
 )
 
-type TabularPipelineModule interface {
-	Run() ([]string, error)
-}
-
-func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) {
+func (g *TabularGenerator) RenderPipelineSpec() (*generator.PipelineCode, error) {
 	logger.Logger.Instance.Debug("running in tabular input mode")
 
 	// map input in temporary buffer, save targets
-	inputMapper := make([]TabularPipelineModule, 0)
+	inputMapper := make([]pipeline.PipelineModule, 0)
 	targetsMapper := make([]int, 0)
 
 	logger.Logger.Instance.Info("mapping input in temporary buffer")
-	for _, input := range s.Input.Metadata {
+	for _, input := range g.Spec.Input.Metadata {
 		// if input is not preprocessed
-		if input["preprocessed"] == nil || input["preprocessed"] == false {
-			logger.Logger.Instance.Debugf("direct input %v", input)
+		casted := input.(map[string]interface{})
+		if casted["preprocessed"] == nil || casted["preprocessed"] == false {
+			logger.Logger.Instance.Debugf("direct input %v", casted)
 
 			// make module for direct input
-			module := &DirectModule{
-				Target: input["target"].(int),
-				Name:   input["name"].(string),
+			module := &pipeline.DirectModule{
+				Target: casted["target"].(int),
+				Name:   casted["name"].(string),
 			}
 			inputMapper = append(inputMapper, module)
 			targetsMapper = append(targetsMapper, module.Target)
@@ -39,7 +36,7 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 	}
 
 	// for each module
-	for _, p := range s.Pipeline {
+	for _, p := range g.Spec.Pipeline {
 		logger.Logger.Instance.Debug(p)
 
 		// find the preprocessing module
@@ -54,7 +51,7 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 				targets = append(targets, t.(int))
 			}
 
-			module := &ScaleModule{
+			module := &pipeline.ScaleModule{
 				Names:   names,
 				Targets: targets,
 				Path:    p.Metadata["path"].(string),
@@ -72,7 +69,7 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 				targets = append(targets, t.(int))
 			}
 
-			module := &OneHotModule{
+			module := &pipeline.OneHotModule{
 				Name:    p.Metadata["for"].(string),
 				Targets: targets,
 				Values:  values,
@@ -90,7 +87,7 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 				targets = append(targets, t.(int))
 			}
 
-			module := &LabelModule{
+			module := &pipeline.LabelModule{
 				Names:   names,
 				Targets: targets,
 				Path:    p.Metadata["path"].(string),
@@ -131,7 +128,7 @@ func RenderTabularPipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) 
 		return nil, err
 	}
 
-	return &pipeline.PipelineCode{
+	return &generator.PipelineCode{
 		Pipelines:   pipelineCodes,
 		Aggregation: aggregationCode,
 	}, nil

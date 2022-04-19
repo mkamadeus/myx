@@ -3,7 +3,10 @@ package tabular
 import (
 	"bytes"
 	_ "embed"
+	"strings"
 	"text/template"
+
+	"github.com/mkamadeus/myx/pkg/utils"
 )
 
 //go:embed input_tabular_type.template
@@ -14,16 +17,16 @@ type TabularInputTypeValues struct {
 	Type string
 }
 
-func GenerateTabularInputTypeCode(values []*TabularInputTypeValues) (string, error) {
+func GenerateTabularInputTypeCode(values []*TabularInputTypeValues) ([]string, error) {
 	t, err := template.New("input").Parse(TabularInputTypeTemplate)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, values)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return buf.String(), nil
+	return utils.ClearEmptyString(strings.Split(buf.String(), "\n")), nil
 }

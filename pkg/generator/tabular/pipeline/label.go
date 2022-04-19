@@ -1,17 +1,17 @@
-package tabular
+package pipeline
 
 import (
 	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
 )
 
 type LabelModule struct {
-	Path string
-	Names []string
+	Path    string
+	Names   []string
 	Targets []int
 }
 
 func (module *LabelModule) Run() ([]string, error) {
-	result := make([]string, 0);
+	result := make([]string, 0)
 
 	// make label code once
 	values := &tabular.TabularLabellerValues{
@@ -24,12 +24,12 @@ func (module *LabelModule) Run() ([]string, error) {
 	}
 	result = append(result, scalerCode...)
 
-	// map scaler result to each 
+	// map scaler result to each
 	for it := range module.Targets {
 		values := &tabular.TabularLabelValues{
-			Index:     module.Targets[it],
-			Name:      module.Names[it],
-			Position:  it,
+			Index:    module.Targets[it],
+			Name:     module.Names[it],
+			Position: it,
 		}
 		code, err := tabular.GenerateTabularLabelCode(values)
 		if err != nil {

@@ -1,21 +1,22 @@
-package input
+package tabular
 
 import (
+	"github.com/mkamadeus/myx/pkg/generator"
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/models"
-	"github.com/mkamadeus/myx/pkg/models/spec"
-	"github.com/mkamadeus/myx/pkg/template/input"
 	"github.com/mkamadeus/myx/pkg/template/input/tabular"
 )
 
-func RenderTabularInputSpec(s *spec.MyxSpec) (*input.InputCode, error) {
+func (g *TabularGenerator) RenderInputSpec() (*generator.InputCode, error) {
+
 	logger.Logger.Instance.Debug("running in tabular input mode")
 
 	values := make([]*tabular.TabularInputTypeValues, 0)
-	for _, m := range s.Input.Metadata {
+	for _, v := range g.Spec.Input.Metadata {
+		casted := v.(map[string]string)
 		values = append(values, &tabular.TabularInputTypeValues{
-			Name: m["name"].(string),
-			Type: models.BodyTypeMapper[m["type"].(string)],
+			Name: casted["name"],
+			Type: models.BodyTypeMapper[casted["type"]],
 		})
 	}
 
@@ -29,8 +30,9 @@ func RenderTabularInputSpec(s *spec.MyxSpec) (*input.InputCode, error) {
 		return nil, err
 	}
 
-	return &input.InputCode{
+	return &generator.InputCode{
 		Type: typeCode,
 		Body: bodyCode,
 	}, nil
+
 }

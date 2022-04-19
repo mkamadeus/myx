@@ -9,7 +9,6 @@ import (
 	"github.com/mkamadeus/myx/pkg/config"
 	"github.com/mkamadeus/myx/pkg/generator"
 	"github.com/mkamadeus/myx/pkg/logger"
-	"github.com/mkamadeus/myx/pkg/models/spec"
 	"github.com/mkamadeus/myx/pkg/template/code"
 	"github.com/spf13/cobra"
 )
@@ -40,7 +39,7 @@ func Execute() {
 				panic(err)
 			}
 
-			s, err := spec.Parse(b)
+			s, err := models.Parse(b)
 			if err != nil {
 				panic(err)
 			}

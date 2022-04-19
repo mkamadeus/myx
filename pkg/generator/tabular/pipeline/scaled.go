@@ -1,17 +1,17 @@
-package tabular
+package pipeline
 
 import (
 	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
 )
 
 type ScaleModule struct {
-	Path string
-	Names []string
+	Path    string
+	Names   []string
 	Targets []int
 }
 
 func (module *ScaleModule) Run() ([]string, error) {
-	result := make([]string, 0);
+	result := make([]string, 0)
 
 	// make scaler code once
 	values := &tabular.TabularScalerValues{
@@ -24,12 +24,12 @@ func (module *ScaleModule) Run() ([]string, error) {
 	}
 	result = append(result, scalerCode...)
 
-	// map scaler result to each 
+	// map scaler result to each
 	for it := range module.Targets {
 		values := &tabular.TabularScaledValues{
-			Index:     module.Targets[it],
-			Name:      module.Names[it],
-			Position:  it,
+			Index:    module.Targets[it],
+			Name:     module.Names[it],
+			Position: it,
 		}
 		code, err := tabular.GenerateTabularScaledCode(values)
 		if err != nil {

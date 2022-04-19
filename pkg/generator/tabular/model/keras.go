@@ -1,26 +1,21 @@
 package model
 
 import (
-	"github.com/mkamadeus/myx/pkg/models/spec"
-	"github.com/mkamadeus/myx/pkg/template/model"
 	"github.com/mkamadeus/myx/pkg/template/model/keras"
 )
 
-func RenderKerasModelCode(s *spec.MyxSpec) (*model.ModelCode, error) {
+type KerasModule struct {
+	Path string
+}
+
+func (module *KerasModule) GetSessionCode() ([]string, error) {
 	sessionValues := &keras.ModelKerasBaseValues{
-		Path: s.Model.Path,
+		Path: module.Path,
 	}
+	return keras.GenerateKerasBase(sessionValues)
+}
+
+func (module *KerasModule) GetPredictionCode() ([]string, error) {
 	predictionValues := &keras.ModelKerasPredictionValues{}
-	sessionCode, err := keras.GenerateKerasBase(sessionValues)
-	if err != nil {
-		return nil, err
-	}
-	predictionCode, err := keras.GenerateKerasPrediction(predictionValues)
-	if err != nil {
-		return nil, err
-	}
-	return &model.ModelCode{
-		Session:    sessionCode,
-		Prediction: predictionCode,
-	}, nil
+	return keras.GenerateKerasPrediction(predictionValues)
 }

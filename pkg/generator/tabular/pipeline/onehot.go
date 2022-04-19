@@ -1,4 +1,4 @@
-package tabular
+package pipeline
 
 import (
 	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"

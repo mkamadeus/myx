@@ -1,26 +1,21 @@
 package model
 
 import (
-	"github.com/mkamadeus/myx/pkg/models/spec"
-	"github.com/mkamadeus/myx/pkg/template/model"
 	"github.com/mkamadeus/myx/pkg/template/model/onnx"
 )
 
-func RenderONNXModelCode(s *spec.MyxSpec) (*model.ModelCode, error) {
+type ONNXModule struct {
+	Path string
+}
+
+func (module *ONNXModule) GetSessionCode() ([]string, error) {
 	sessionValues := &onnx.ModelONNXBaseValues{
-		Path: s.Model.Path,
+		Path: module.Path,
 	}
+	return onnx.GenerateONNXBase(sessionValues)
+}
+
+func (module *ONNXModule) GetPredictionCode() ([]string, error) {
 	predictionValues := &onnx.ModelONNXPredictionValues{}
-	sessionCode, err := onnx.GenerateONNXBase(sessionValues)
-	if err != nil {
-		return nil, err
-	}
-	predictionCode, err := onnx.GenerateONNXPrediction(predictionValues)
-	if err != nil {
-		return nil, err
-	}
-	return &model.ModelCode{
-		Session:    sessionCode,
-		Prediction: predictionCode,
-	}, nil
+	return onnx.GenerateONNXPrediction(predictionValues)
 }
