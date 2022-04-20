@@ -8,9 +8,13 @@ import (
 
 	"github.com/mkamadeus/myx/pkg/config"
 	"github.com/mkamadeus/myx/pkg/generator"
+	"github.com/mkamadeus/myx/pkg/generator/image"
+	"github.com/mkamadeus/myx/pkg/generator/tabular"
 	"github.com/mkamadeus/myx/pkg/logger"
+	"github.com/mkamadeus/myx/pkg/models"
 	"github.com/mkamadeus/myx/pkg/template/code"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v2"
 )
 
 func Execute() {
@@ -39,12 +43,23 @@ func Execute() {
 				panic(err)
 			}
 
-			s, err := models.Parse(b)
+			// parse yaml spec
+			s := &models.MyxSpec{}
+			err = yaml.Unmarshal(b, s)
 			if err != nil {
 				panic(err)
 			}
 
-			apiCode, err := generator.RenderSpec(s)
+			var apiGenerator generator.Generator
+
+			if s.Input.Format == "tabular" {
+				apiGenerator = &tabular.TabularGenerator{}
+			} else if s.Input.Format == "image" {
+				apiGenerator = &image.ImageGenerator{}
+			}
+
+			apiCode, err := apiGenerator.RenderCode()
+
 			if err != nil {
 				panic(err)
 			}

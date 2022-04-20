@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/mkamadeus/myx/pkg/generator"
-	"github.com/mkamadeus/myx/pkg/generator/tabular/model"
+	"github.com/mkamadeus/myx/pkg/generator/common/model"
 )
 
 func (g *TabularGenerator) RenderModelSpec() (*generator.ModelCode, error) {
