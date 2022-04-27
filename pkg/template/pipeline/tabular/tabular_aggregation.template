@@ -1,1 +1,1 @@
-prediction = np.concatenate(({{range .PipelineVariables}}t{{.}}, {{end}}), axis=1).astype(np.float32)
+prediction = np.concatenate(({{range .Variables}}t{{.}}, {{end}}), axis=1).astype(np.float32)

@@ -18,9 +18,11 @@ func (g *TabularGenerator) RenderPipelineSpec() (*generator.PipelineCode, error)
 	targetsMapper := make([]int, 0)
 
 	logger.Logger.Instance.Info("mapping input in temporary buffer")
-	for _, input := range g.Spec.Input.Metadata {
+
+	columns := g.Spec.Input.Metadata["columns"].([]interface{})
+	for _, input := range columns {
 		// if input is not preprocessed
-		casted := input.(map[string]interface{})
+		casted := input.(map[interface{}]interface{})
 		if casted["preprocessed"] == nil || casted["preprocessed"] == false {
 			logger.Logger.Instance.Debugf("direct input %v", casted)
 

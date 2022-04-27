@@ -12,11 +12,13 @@ func (g *TabularGenerator) RenderInputSpec() (*generator.InputCode, error) {
 	logger.Logger.Instance.Debug("running in tabular input mode")
 
 	values := make([]*tabular.TabularInputTypeValues, 0)
-	for _, v := range g.Spec.Input.Metadata {
-		casted := v.(map[string]string)
+	logger.Logger.Instance.Debug(g.Spec)
+	columns := g.Spec.Input.Metadata["columns"].([]interface{})
+	for _, v := range columns {
+		casted := v.(map[interface{}]interface{})
 		values = append(values, &tabular.TabularInputTypeValues{
-			Name: casted["name"],
-			Type: models.BodyTypeMapper[casted["type"]],
+			Name: casted["name"].(string),
+			Type: models.BodyTypeMapper[casted["type"].(string)],
 		})
 	}
 

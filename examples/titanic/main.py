@@ -7,6 +7,7 @@ import numpy as np
 app = FastAPI()
 model = rt.InferenceSession("titanic.onnx")
 
+
 class Input(BaseModel):
 	pclass : int
 	sibsp : int
@@ -27,7 +28,7 @@ async def root(body: Input):
     t1 =  np.array([[body.sibsp]])
     t2 =  np.array([[body.parch]])
     scaler_age = joblib.load('age.scaler')
-    scaled =  scaler_age.transform(np.array([[body.age,]]}))
+    scaled = scaler_age.transform(np.array([[body.age,]]))
     t3 =  np.array([[ scaled[0] ]])
     t4 =  np.array([[1 if body.gender == "M" else 0]])
     t5 =  np.array([[1 if body.gender == "F" else 0]])

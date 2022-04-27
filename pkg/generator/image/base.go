@@ -3,7 +3,7 @@ package image
 import (
 	"bytes"
 	_ "embed"
-	"html/template"
+	"text/template"
 
 	"github.com/mkamadeus/myx/pkg/models"
 )

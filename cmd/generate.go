@@ -44,7 +44,7 @@ func Execute() {
 			}
 
 			// parse yaml spec
-			s := models.MyxSpec{}
+			s := &models.MyxSpec{}
 			err = yaml.Unmarshal(b, &s)
 			if err != nil {
 				panic(err)
@@ -53,9 +53,13 @@ func Execute() {
 			var apiGenerator generator.Generator
 
 			if s.Input.Format == "tabular" {
-				apiGenerator = &tabular.TabularGenerator{}
+				apiGenerator = &tabular.TabularGenerator{
+					Spec: s,
+				}
 			} else if s.Input.Format == "image" {
-				apiGenerator = &image.ImageGenerator{}
+				apiGenerator = &image.ImageGenerator{
+					Spec: s,
+				}
 			}
 
 			apiCode, err := apiGenerator.RenderCode()
