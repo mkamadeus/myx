@@ -44,8 +44,8 @@ func Execute() {
 			}
 
 			// parse yaml spec
-			s := &models.MyxSpec{}
-			err = yaml.Unmarshal(b, s)
+			s := models.MyxSpec{}
+			err = yaml.Unmarshal(b, &s)
 			if err != nil {
 				panic(err)
 			}

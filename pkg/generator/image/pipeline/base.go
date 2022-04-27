@@ -3,9 +3,9 @@ package pipeline
 import (
 	"fmt"
 
+	"github.com/mkamadeus/myx/pkg/generator"
 	"github.com/mkamadeus/myx/pkg/logger"
-	"github.com/mkamadeus/myx/pkg/models/spec"
-	"github.com/mkamadeus/myx/pkg/template/pipeline"
+	"github.com/mkamadeus/myx/pkg/models"
 	"github.com/mkamadeus/myx/pkg/template/pipeline/image"
 )
 
@@ -14,7 +14,7 @@ type ImagePipelineModule interface {
 }
 
 // TODO: image pipeline
-func RenderImagePipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) {
+func RenderImagePipelineSpec(s *models.MyxSpec) (*generator.PipelineCode, error) {
 	logger.Logger.Instance.Debug("running in image input mode")
 
 	// map input in temporary buffer, save targets
@@ -77,7 +77,7 @@ func RenderImagePipelineSpec(s *spec.MyxSpec) (*pipeline.PipelineCode, error) {
 		return nil, err
 	}
 
-	return &pipeline.PipelineCode{
+	return &generator.PipelineCode{
 		Pipelines:   pipelineCodes,
 		Aggregation: aggregationCode,
 	}, nil
