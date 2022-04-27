@@ -21,7 +21,7 @@ func (g *ImageGenerator) RenderCode() (string, error) {
 		return "", err
 	}
 
-	t, err := template.New("tabular_api_code").Parse(APICode)
+	t, err := template.New("image_api_code").Parse(APICode)
 	if err != nil {
 		return "", err
 	}

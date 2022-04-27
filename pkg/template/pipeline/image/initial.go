@@ -12,10 +12,10 @@ import (
 //go:embed image_initial.template
 var ImageInitialTemplate string
 
-type ImageInitialValues struct {}
+type ImageInitialValues struct{}
 
 func GenerateImageInitialCode(values *ImageInitialValues) ([]string, error) {
-	t, err := template.New("image_resize").Parse(ImageResizeTemplate)
+	t, err := template.New("image_initial").Parse(ImageInitialTemplate)
 	if err != nil {
 		return nil, err
 	}

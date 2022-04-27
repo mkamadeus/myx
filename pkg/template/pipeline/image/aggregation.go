@@ -2,6 +2,7 @@ package image
 
 import (
 	"bytes"
+	_ "embed"
 	"strings"
 	"text/template"
 
@@ -12,13 +13,13 @@ import (
 var ImageAggregationTemplate string
 
 type ImageAggregationValues struct {
-	Width int
-	Height int
+	Width   int
+	Height  int
 	Channel int
 }
 
 func GenerateImageAggregationCode(values *ImageAggregationValues) ([]string, error) {
-	t, err := template.New("image_aggregation").Parse(ImageResizeTemplate)
+	t, err := template.New("image_aggregation").Parse(ImageAggregationTemplate)
 	if err != nil {
 		return nil, err
 	}

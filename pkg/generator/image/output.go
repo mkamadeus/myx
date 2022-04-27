@@ -2,6 +2,7 @@ package image
 
 import (
 	"github.com/mkamadeus/myx/pkg/generator"
+	"github.com/mkamadeus/myx/pkg/models"
 	"github.com/mkamadeus/myx/pkg/template/output"
 )
 
@@ -10,7 +11,7 @@ func (g *ImageGenerator) RenderOutputSpec() (*generator.OutputCode, error) {
 	for _, m := range g.Spec.Output {
 		typeValues = append(typeValues, &output.OutputTypeValues{
 			Name: m.Name,
-			Type: m.Type,
+			Type: models.BodyTypeMapper[m.Type],
 		})
 	}
 

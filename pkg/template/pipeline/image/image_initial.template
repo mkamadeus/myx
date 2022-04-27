@@ -1,1 +1,3 @@
-img = file.read()
+contents = await file.read()
+stream = io.BytesIO(contents)
+img = Image.open(stream)

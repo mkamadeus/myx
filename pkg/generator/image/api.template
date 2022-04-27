@@ -1,17 +1,20 @@
-from fastapi import FastAPI
+from typing import List
+from fastapi import FastAPI, UploadFile
+from keras.models import load_model
 from pydantic import BaseModel
-import joblib
-import onnxruntime as rt
 import numpy as np
+import io
+from PIL import Image
 
 app = FastAPI()
-{{range .ModelCode.Session}}{{.}}{{end}}
+{{range .ModelCode.Session}}{{.}}
+{{end}}
 
-{{.InputCode.Type}}
-{{.OutputCode.Type}}
+{{range .OutputCode.Type}}{{.}}
+{{end}}
 
 @app.post('/')
-async def root({{.InputCode.Body}}):
+async def root({{index .InputCode.Body 0}}):
 {{range .PipelineCode.Pipelines}}    {{.}}
 {{end}}
 {{range .PipelineCode.Aggregation}}    {{.}}

@@ -2,127 +2,45 @@ package image
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/mkamadeus/myx/pkg/generator"
-	"github.com/mkamadeus/myx/pkg/generator/tabular/pipeline"
+	"github.com/mkamadeus/myx/pkg/generator/image/pipeline"
 	"github.com/mkamadeus/myx/pkg/logger"
-	"github.com/mkamadeus/myx/pkg/template/pipeline/tabular"
+	"github.com/mkamadeus/myx/pkg/template/pipeline/image"
 )
 
 func (g *ImageGenerator) RenderPipelineSpec() (*generator.PipelineCode, error) {
-	logger.Logger.Instance.Debug("running in tabular input mode")
-
-	// map input in temporary buffer, save targets
-	inputMapper := make([]pipeline.PipelineModule, 0)
-	targetsMapper := make([]int, 0)
-
-	logger.Logger.Instance.Info("mapping input in temporary buffer")
-	for _, input := range g.Spec.Input.Metadata {
-		// if input is not preprocessed
-		casted := input.(map[string]interface{})
-		if casted["preprocessed"] == nil || casted["preprocessed"] == false {
-			logger.Logger.Instance.Debugf("direct input %v", casted)
-
-			// make module for direct input
-			module := &pipeline.DirectModule{
-				Target: casted["target"].(int),
-				Name:   casted["name"].(string),
-			}
-			inputMapper = append(inputMapper, module)
-			targetsMapper = append(targetsMapper, module.Target)
-
-		}
-	}
+	logger.Logger.Instance.Debug("running in image pipeline mode")
 
 	// for each module
+	pipelines := make([]pipeline.ImagePipelineModule, 0)
+	pipelines = append(pipelines, &pipeline.InitialReadModule{})
+
 	for _, p := range g.Spec.Pipeline {
 		logger.Logger.Instance.Debug(p)
-
-		// find the preprocessing module
-		if p.Module == "preprocessing/scale" {
-			// add module to mapper
-			names := make([]string, 0)
-			for _, n := range p.Metadata["for"].([]interface{}) {
-				names = append(names, n.(string))
-			}
-			targets := make([]int, 0)
-			for _, t := range p.Metadata["target"].([]interface{}) {
-				targets = append(targets, t.(int))
-			}
-
-			module := &pipeline.ScaleModule{
-				Names:   names,
-				Targets: targets,
-				Path:    p.Metadata["path"].(string),
-			}
-			inputMapper = append(inputMapper, module)
-			targetsMapper = append(targetsMapper, module.Targets...)
-		} else if p.Module == "preprocessing/onehot" {
-			// add module to mapper
-			values := make([]string, 0)
-			for _, n := range p.Metadata["values"].([]interface{}) {
-				values = append(values, n.(string))
-			}
-			targets := make([]int, 0)
-			for _, t := range p.Metadata["target"].([]interface{}) {
-				targets = append(targets, t.(int))
-			}
-
-			module := &pipeline.OneHotModule{
-				Name:    p.Metadata["for"].(string),
-				Targets: targets,
-				Values:  values,
-			}
-			inputMapper = append(inputMapper, module)
-			targetsMapper = append(targetsMapper, module.Targets...)
-		} else if p.Module == "preprocessing/label" {
-			// add module to mapper
-			names := make([]string, 0)
-			for _, n := range p.Metadata["for"].([]interface{}) {
-				names = append(names, n.(string))
-			}
-			targets := make([]int, 0)
-			for _, t := range p.Metadata["target"].([]interface{}) {
-				targets = append(targets, t.(int))
-			}
-
-			module := &pipeline.LabelModule{
-				Names:   names,
-				Targets: targets,
-				Path:    p.Metadata["path"].(string),
-			}
-			inputMapper = append(inputMapper, module)
-			targetsMapper = append(targetsMapper, module.Targets...)
+		if p.Module == "preprocessing/image/resize" {
+			pipelines = append(pipelines, &pipeline.ResizeModule{
+				Width:  p.Metadata["width"].(int),
+				Height: p.Metadata["height"].(int),
+			})
 		} else {
-			logger.Logger.Instance.Debug("module not found")
-			return nil, fmt.Errorf("invalid module found")
+			return nil, fmt.Errorf("invalid module")
 		}
 	}
 
-	// map buffer to actual code
-	logger.Logger.Instance.Info("mapping buffer to code")
-
 	pipelineCodes := make([]string, 0)
-	for _, mapper := range inputMapper {
-		c, err := mapper.Run()
+	for _, p := range pipelines {
+		moduleCode, err := p.Run()
 		if err != nil {
 			return nil, err
 		}
-
-		pipelineCodes = append(pipelineCodes, c...)
-		logger.Logger.Instance.Debug(pipelineCodes)
+		pipelineCodes = append(pipelineCodes, moduleCode...)
 	}
 
-	// aggregation code
-	variables := make([]string, len(targetsMapper))
-	sort.Ints(targetsMapper)
-	for it, t := range targetsMapper {
-		variables[it] = fmt.Sprintf("%d", t)
-	}
-
-	aggregationCode, err := tabular.GenerateTabularAggregationCode(&tabular.TabularAggregationValues{
-		Variables: variables,
+	aggregationCode, err := image.GenerateImageAggregationCode(&image.ImageAggregationValues{
+		Width:   g.Spec.Input.Metadata["width"].(int),
+		Height:  g.Spec.Input.Metadata["height"].(int),
+		Channel: g.Spec.Input.Metadata["channel"].(int),
 	})
 	if err != nil {
 		return nil, err
