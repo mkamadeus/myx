@@ -1,24 +1,25 @@
 input:
   format: tabular
   meta:
-    - name: pclass
-      type: int
-      target: 0
-    - name: sibsp
-      type: int
-      target: 1
-    - name: parch
-      type: int
-      target: 2
-    - name: age
-      type: float
-      preprocessed: true
-    - name: gender
-      type: categorical
-      preprocessed: true
-    - name: embarked
-      type: categorical
-      preprocessed: true
+    columns:
+      - name: pclass
+        type: int
+        target: 0
+      - name: sibsp
+        type: int
+        target: 1
+      - name: parch
+        type: int
+        target: 2
+      - name: age
+        type: float
+        preprocessed: true
+      - name: gender
+        type: categorical
+        preprocessed: true
+      - name: embarked
+        type: categorical
+        preprocessed: true
 output:
   - name: prediction
     type: float

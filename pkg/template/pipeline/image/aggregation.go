@@ -9,16 +9,17 @@ import (
 	"github.com/mkamadeus/myx/pkg/utils"
 )
 
-//go:embed image_resize.template
-var ImageResizeTemplate string
+//go:embed image_aggregation.template
+var ImageAggregationTemplate string
 
-type ImageResizeValues struct {
-	Height int
-	Width  int
+type ImageAggregationValues struct {
+	Width   int
+	Height  int
+	Channel int
 }
 
-func GenerateImageResizeCode(values *ImageResizeValues) ([]string, error) {
-	t, err := template.New("image_resize").Parse(ImageResizeTemplate)
+func GenerateImageAggregationCode(values *ImageAggregationValues) ([]string, error) {
+	t, err := template.New("image_aggregation").Parse(ImageAggregationTemplate)
 	if err != nil {
 		return nil, err
 	}

@@ -1,4 +1,4 @@
-package image
+package tabular
 
 import (
 	"bytes"
@@ -9,16 +9,13 @@ import (
 	"github.com/mkamadeus/myx/pkg/utils"
 )
 
-//go:embed image_resize.template
-var ImageResizeTemplate string
+//go:embed input_tabular_body.template
+var TabularInputBodyTemplate string
 
-type ImageResizeValues struct {
-	Height int
-	Width  int
-}
+type TabularInputBodyValues struct{}
 
-func GenerateImageResizeCode(values *ImageResizeValues) ([]string, error) {
-	t, err := template.New("image_resize").Parse(ImageResizeTemplate)
+func GenerateTabularInputBodyCode(values *TabularInputBodyValues) ([]string, error) {
+	t, err := template.New("input").Parse(TabularInputBodyTemplate)
 	if err != nil {
 		return nil, err
 	}

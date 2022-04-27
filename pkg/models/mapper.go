@@ -5,6 +5,7 @@ var BodyTypeMapper = map[string]string{
 	"int":         "int",
 	"categorical": "str",
 	"string":      "str",
+	"float[]":     "List[float]",
 }
 
 var NumpyTypeMapper = map[string]string{

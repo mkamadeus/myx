@@ -5,7 +5,8 @@ import onnxruntime as rt
 import numpy as np
 
 app = FastAPI()
-model = load_model(churn.h5)
+model = load_model("churn.h5")
+
 
 class Input(BaseModel):
 	credit_score : float
@@ -29,7 +30,7 @@ async def root(body: Input):
     t9 =  np.array([[body.has_credit_card]])
     t10 =  np.array([[body.is_active_member]])
     scaler_credit_score_age_tenure_balance_num_of_products_estimated_salary = joblib.load('churn.scaler')
-    scaled =  scaler_credit_score_age_tenure_balance_num_of_products_estimated_salary.transform(np.array([[body.credit_score,body.age,body.tenure,body.balance,body.num_of_products,body.estimated_salary,]]}))
+    scaled = scaler_credit_score_age_tenure_balance_num_of_products_estimated_salary.transform(np.array([[body.credit_score,body.age,body.tenure,body.balance,body.num_of_products,body.estimated_salary,]]))
     t0 =  np.array([[ scaled[0] ]])
     t5 =  np.array([[ scaled[1] ]])
     t6 =  np.array([[ scaled[2] ]])
@@ -40,7 +41,7 @@ async def root(body: Input):
     t2 =  np.array([[1 if body.geography == "Spain" else 0]])
     t3 =  np.array([[1 if body.geography == "France" else 0]])
     labeller_gender = joblib.load('geo.encoder')
-    labelled =  scaler_gender.transform(np.array([[body.gender,]]}))
+    labelled =  labeller_gender.transform(np.array([[body.gender,]]}))
     t4 =  np.array([[ labelled[0] ]])
 
     prediction = np.concatenate((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, ), axis=1).astype(np.float32)

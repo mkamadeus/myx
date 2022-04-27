@@ -1,0 +1,24 @@
+from typing import List
+from fastapi import FastAPI, UploadFile
+from keras.models import load_model
+from pydantic import BaseModel
+import numpy as np
+import io
+from PIL import Image
+
+app = FastAPI()
+{{range .ModelCode.Session}}{{.}}
+{{end}}
+
+{{range .OutputCode.Type}}{{.}}
+{{end}}
+
+@app.post('/')
+async def root({{index .InputCode.Body 0}}):
+{{range .PipelineCode.Pipelines}}    {{.}}
+{{end}}
+{{range .PipelineCode.Aggregation}}    {{.}}
+{{end}}
+{{range .ModelCode.Prediction}}    {{.}}
+{{end}}
+    return {{.OutputCode.Prediction}}

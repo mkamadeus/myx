@@ -11,33 +11,34 @@
 input:
   format: tabular
   meta:
-    - name: credit_score
-      type: float
-      preprocessed: true
-    - name: geography
-      type: categorical
-      preprocessed: true
-    - name: gender
-      type: categorical
-      preprocessed: true
-    - name: tenure
-      type: float
-      preprocessed: true
-    - name: balance
-      type: float
-      preprocessed: true
-    - name: num_of_products
-      type: int
-      preprocessed: true
-    - name: has_credit_card
-      type: int
-      target: 9
-    - name: is_active_member
-      type: int
-      target: 10
-    - name: estimated_salary
-      type: float
-      preprocessed: true
+    columns:
+      - name: credit_score
+        type: float
+        preprocessed: true
+      - name: geography
+        type: categorical
+        preprocessed: true
+      - name: gender
+        type: categorical
+        preprocessed: true
+      - name: tenure
+        type: float
+        preprocessed: true
+      - name: balance
+        type: float
+        preprocessed: true
+      - name: num_of_products
+        type: int
+        preprocessed: true
+      - name: has_credit_card
+        type: int
+        target: 9
+      - name: is_active_member
+        type: int
+        target: 10
+      - name: estimated_salary
+        type: float
+        preprocessed: true
 output:
   - name: prediction
     type: float

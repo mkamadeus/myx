@@ -1,1 +1,1 @@
-model = load_model({{.Path}})
+model = load_model("{{.Path}}")

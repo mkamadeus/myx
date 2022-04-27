@@ -1,0 +1,24 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+import joblib
+import onnxruntime as rt
+import numpy as np
+
+app = FastAPI()
+{{range .ModelCode.Session}}{{.}}
+{{end}}
+
+{{range .InputCode.Type}}{{.}}
+{{end}}
+{{range .OutputCode.Type}}{{.}}
+{{end}}
+
+@app.post('/')
+async def root({{index .InputCode.Body 0}}):
+{{range .PipelineCode.Pipelines}}    {{.}}
+{{end}}
+{{range .PipelineCode.Aggregation}}    {{.}}
+{{end}}
+{{range .ModelCode.Prediction}}    {{.}}
+{{end}}
+    return {{index .OutputCode.Prediction 0}}

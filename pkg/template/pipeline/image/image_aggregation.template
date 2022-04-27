@@ -1,0 +1,1 @@
+result = np.array(img).reshape((1,{{.Height}},{{.Width}},{{.Channel}}))
