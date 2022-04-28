@@ -16,6 +16,7 @@ func (g *TabularGenerator) RenderPipelineSpec() (*generator.PipelineCode, error)
 	// map input in temporary buffer, save targets
 	inputMapper := make([]pipeline.PipelineModule, 0)
 	targetsMapper := make([]int, 0)
+	imports := make([]string, 0)
 
 	logger.Logger.Instance.Info("mapping input in temporary buffer")
 
@@ -58,6 +59,8 @@ func (g *TabularGenerator) RenderPipelineSpec() (*generator.PipelineCode, error)
 				Targets: targets,
 				Path:    p.Metadata["path"].(string),
 			}
+
+			imports = append(imports, "import joblib")
 			inputMapper = append(inputMapper, module)
 			targetsMapper = append(targetsMapper, module.Targets...)
 		} else if p.Module == "preprocessing/onehot" {
@@ -94,6 +97,8 @@ func (g *TabularGenerator) RenderPipelineSpec() (*generator.PipelineCode, error)
 				Targets: targets,
 				Path:    p.Metadata["path"].(string),
 			}
+
+			imports = append(imports, "import joblib")
 			inputMapper = append(inputMapper, module)
 			targetsMapper = append(targetsMapper, module.Targets...)
 		} else {
@@ -131,6 +136,7 @@ func (g *TabularGenerator) RenderPipelineSpec() (*generator.PipelineCode, error)
 	}
 
 	return &generator.PipelineCode{
+		Imports:     imports,
 		Pipelines:   pipelineCodes,
 		Aggregation: aggregationCode,
 	}, nil

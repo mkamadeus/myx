@@ -12,10 +12,13 @@ import (
 func (g *ImageGenerator) RenderPipelineSpec() (*generator.PipelineCode, error) {
 	logger.Logger.Instance.Debug("running in image pipeline mode")
 
-	// for each module
 	pipelines := make([]pipeline.ImagePipelineModule, 0)
+	imports := make([]string, 0)
+
+	// initial image read
 	pipelines = append(pipelines, &pipeline.InitialReadModule{})
 
+	// for each module
 	for _, p := range g.Spec.Pipeline {
 		logger.Logger.Instance.Debug(p)
 		if p.Module == "preprocessing/image/resize" {

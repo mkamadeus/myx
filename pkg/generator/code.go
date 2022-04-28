@@ -8,21 +8,25 @@ type APICode struct {
 }
 
 type PipelineCode struct {
+	Imports     []string
 	Pipelines   []string
 	Aggregation []string
 }
 
 type InputCode struct {
-	Type []string
-	Body []string
+	Imports []string
+	Type    []string
+	Body    []string
 }
 
 type OutputCode struct {
+	Imports    []string
 	Type       []string
 	Prediction []string
 }
 
 type ModelCode struct {
+	Imports    []string
 	Session    []string
 	Prediction []string
 }

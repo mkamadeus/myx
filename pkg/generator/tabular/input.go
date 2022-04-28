@@ -1,6 +1,9 @@
 package tabular
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/mkamadeus/myx/pkg/generator"
 	"github.com/mkamadeus/myx/pkg/logger"
 	"github.com/mkamadeus/myx/pkg/models"
@@ -12,14 +15,25 @@ func (g *TabularGenerator) RenderInputSpec() (*generator.InputCode, error) {
 	logger.Logger.Instance.Debug("running in tabular input mode")
 
 	values := make([]*tabular.TabularInputTypeValues, 0)
-	logger.Logger.Instance.Debug(g.Spec)
+	imports := make([]string, 0)
+
 	columns := g.Spec.Input.Metadata["columns"].([]interface{})
 	for _, v := range columns {
 		casted := v.(map[interface{}]interface{})
-		values = append(values, &tabular.TabularInputTypeValues{
+		value := &tabular.TabularInputTypeValues{
 			Name: casted["name"].(string),
-			Type: models.BodyTypeMapper[casted["type"].(string)],
-		})
+			Type: casted["type"].(string),
+		}
+
+		// check array type, duplicates will be thrown away later
+		if strings.HasSuffix(value.Type, "[]") {
+			imports = append(imports, "from typing import List")
+			value.Type = fmt.Sprintf("List[%s]", models.BodyTypeMapper[value.Type[0:len(value.Type)-2]])
+		} else {
+			value.Type = models.BodyTypeMapper[value.Type]
+		}
+
+		values = append(values, value)
 	}
 
 	typeCode, err := tabular.GenerateTabularInputTypeCode(values)
@@ -33,8 +47,9 @@ func (g *TabularGenerator) RenderInputSpec() (*generator.InputCode, error) {
 	}
 
 	return &generator.InputCode{
-		Type: typeCode,
-		Body: bodyCode,
+		Imports: imports,
+		Type:    typeCode,
+		Body:    bodyCode,
 	}, nil
 
 }
