@@ -17,6 +17,8 @@ func (g *ImageGenerator) RenderPipelineSpec() (*generator.PipelineCode, error) {
 
 	// initial image read
 	pipelines = append(pipelines, &pipeline.InitialReadModule{})
+	imports = append(imports, "import io")
+	imports = append(imports, "from PIL import Image")
 
 	// for each module
 	for _, p := range g.Spec.Pipeline {
@@ -50,6 +52,7 @@ func (g *ImageGenerator) RenderPipelineSpec() (*generator.PipelineCode, error) {
 	}
 
 	return &generator.PipelineCode{
+		Imports: imports,
 		Pipelines:   pipelineCodes,
 		Aggregation: aggregationCode,
 	}, nil

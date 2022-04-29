@@ -1,6 +1,9 @@
 package tabular
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/mkamadeus/myx/pkg/generator"
 	"github.com/mkamadeus/myx/pkg/models"
 	"github.com/mkamadeus/myx/pkg/template/output"
@@ -8,11 +11,23 @@ import (
 
 func (g *TabularGenerator) RenderOutputSpec() (*generator.OutputCode, error) {
 	typeValues := make([]*output.OutputTypeValues, 0)
+	imports := make([]string, 0)
+
 	for _, m := range g.Spec.Output {
-		typeValues = append(typeValues, &output.OutputTypeValues{
+		value := &output.OutputTypeValues{
 			Name: m.Name,
 			Type: models.BodyTypeMapper[m.Type],
-		})
+		}
+		// check array type, duplicates will be thrown away later
+		if strings.HasSuffix(value.Type, "[]") {
+			imports = append(imports, "from typing import List")
+			value.Type = fmt.Sprintf("List[%s]", models.BodyTypeMapper[value.Type[0:len(value.Type)-2]])
+		} else {
+			value.Type = models.BodyTypeMapper[value.Type]
+		}
+
+		typeValues = append(typeValues, value)
+
 	}
 
 	typeCode, err := output.GenerateOutputType(typeValues)
@@ -25,6 +40,7 @@ func (g *TabularGenerator) RenderOutputSpec() (*generator.OutputCode, error) {
 	}
 
 	return &generator.OutputCode{
+		Imports: imports,
 		Type:       typeCode,
 		Prediction: predictionCode,
 	}, nil

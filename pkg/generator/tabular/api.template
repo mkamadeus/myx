@@ -1,6 +1,12 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import numpy as np
+{{range .InputCode.Imports}}{{.}}
+{{end}}
+{{range .OutputCode.Imports}}{{.}}
+{{end}}
+{{range .PipelineCode.Imports}}{{.}}
+{{end}}
 
 app = FastAPI()
 {{range .ModelCode.Session}}{{.}}

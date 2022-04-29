@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-import joblib
-import onnxruntime as rt
 import numpy as np
+
+
+import joblib
+
 
 app = FastAPI()
 model = rt.InferenceSession("titanic.onnx")
