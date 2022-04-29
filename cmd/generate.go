@@ -5,8 +5,11 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
+	"strings"
 
 	"github.com/mkamadeus/myx/pkg/config"
+	"github.com/mkamadeus/myx/pkg/executor"
 	"github.com/mkamadeus/myx/pkg/generator"
 	"github.com/mkamadeus/myx/pkg/generator/image"
 	"github.com/mkamadeus/myx/pkg/generator/tabular"
@@ -62,13 +65,44 @@ func Execute() {
 				}
 			}
 
+			logger.Logger.Instance.Info("generating API code")
 			apiCode, err := apiGenerator.RenderCode()
-
 			if err != nil {
 				panic(err)
 			}
 
+			// get imports for executor
+			logger.Logger.Instance.Info("getting required imports")
+			imports := make([]string, 0)
+			codeLines := strings.Split(apiCode, "\n")
+			r1 := regexp.MustCompile(`from (\w+) import .*`)
+			r2 := regexp.MustCompile(`import (\w+)`)
+			for _, code := range codeLines {
+				if r1.Match([]byte(code)) || r2.Match([]byte(code)) {
+					pkgName := strings.Split(code, " ")[1]
+					if pkgName == "PIL" {
+						imports = append(imports, "Pillow")
+					} else {
+						imports = append(imports, pkgName)
+					}
+				}
+			}
+
+			logger.Logger.Instance.Info("installing dependencies")
+			pwd, err := os.Getwd()
+			if err != nil {
+				panic(err)
+			}
+			e := &executor.Executor{
+				Imports: imports,
+				Path:    path.Join(pwd, config.Output),
+			}
+			if err := e.Execute(); err != nil {
+				panic(err)
+			}
+
 			// write spec
+			logger.Logger.Instance.Info("writing files")
 			f, err := os.Create(path.Join(config.Config.Output, "main.py"))
 			if err != nil {
 				panic(err)

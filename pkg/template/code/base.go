@@ -15,12 +15,9 @@ var dockerfile string
 //go:embed .gitignore
 var gitignore string
 
-//go:embed requirements.txt
-var requirements string
-
 func RenderFiles(targetPath string) error {
-	contents := []string{dockerignore, dockerfile, gitignore, requirements}
-	names := []string{".dockerignore", "Dockerfile", ".gitignore", "requirements.txt"}
+	contents := []string{dockerignore, dockerfile, gitignore}
+	names := []string{".dockerignore", "Dockerfile", ".gitignore"}
 
 	for i, c := range contents {
 		name := names[i]
