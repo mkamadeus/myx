@@ -22,6 +22,7 @@ _Don't expect this project to be used in production_; this was really made to se
 #### Prerequisites
 
 - Go v1.18
+- Python, pip for installing the requirements
 
 #### Building and Running
 
