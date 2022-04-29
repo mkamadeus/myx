@@ -1,10 +1,19 @@
-from typing import List
 from fastapi import FastAPI, UploadFile
-from keras.models import load_model
 from pydantic import BaseModel
 import numpy as np
+
+# input imports
+
+# output imports
+from typing import List
+
+# model imports
+from keras.models import load_model
+
+# pipeline imports
 import io
 from PIL import Image
+
 
 app = FastAPI()
 model = load_model("mnist.h5")

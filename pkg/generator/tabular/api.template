@@ -1,10 +1,17 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import numpy as np
+
+# input imports
 {{range .InputCode.Imports}}{{.}}
 {{end}}
+# output imports
 {{range .OutputCode.Imports}}{{.}}
 {{end}}
+# model imports
+{{range .ModelCode.Imports}}{{.}}
+{{end}}
+# pipeline imports
 {{range .PipelineCode.Imports}}{{.}}
 {{end}}
 

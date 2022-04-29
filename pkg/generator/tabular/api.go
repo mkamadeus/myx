@@ -7,27 +7,27 @@ import (
 
 func (g *TabularGenerator) RenderAPISpec() (*generator.APICode, error) {
 	// input
-	logger.Logger.Instance.Info("rendered input specification")
 	inputCode, err := g.RenderInputSpec()
 	if err != nil {
 		return nil, err
 	}
+	logger.Logger.Instance.Info("rendered input specification")
 	logger.Logger.Instance.Debug(inputCode)
 
 	// output
-	logger.Logger.Instance.Info("rendered output specification")
 	outputCode, err := g.RenderOutputSpec()
 	if err != nil {
 		return nil, err
 	}
+	logger.Logger.Instance.Info("rendered output specification")
 	logger.Logger.Instance.Debug(outputCode)
 
 	// model
-	logger.Logger.Instance.Info("rendered model specification")
 	modelCode, err := g.RenderModelSpec()
 	if err != nil {
 		return nil, err
 	}
+	logger.Logger.Instance.Info("rendered model specification")
 	logger.Logger.Instance.Debug(modelCode)
 
 	// pipeline
@@ -45,6 +45,7 @@ func (g *TabularGenerator) RenderAPISpec() (*generator.APICode, error) {
 		PipelineCode: pipelineCode,
 		ModelCode:    modelCode,
 	}
+	logger.Logger.Instance.Debug(apiCode)
 
 	return apiCode, nil
 }

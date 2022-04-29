@@ -3,6 +3,8 @@ from pydantic import BaseModel
 import numpy as np
 
 
+import onnxruntime as rt
+
 import joblib
 
 
@@ -38,7 +40,7 @@ async def root(body: Input):
     t7 =  np.array([[1 if body.embarked == "Q" else 0]])
     t8 =  np.array([[1 if body.embarked == "S" else 0]])
 
-    prediction = np.concatenate((t0, t1, t2, t3, t4, t5, t6, t7, t8, ), axis=1).astype(np.float32)
+    result = np.concatenate((t0, t1, t2, t3, t4, t5, t6, t7, t8, ), axis=1).astype(np.float32)
 
     input_name = model.get_inputs()[0].name
     label_name = model.get_outputs()[0].name
