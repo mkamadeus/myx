@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"fmt"
 	"os/exec"
 	"strings"
 )
@@ -10,5 +11,8 @@ func (e *Executor) InitCommand() error {
 	cmd := exec.Command(statement[0], statement[1:]...)
 	cmd.Dir = e.Path
 	err := cmd.Run()
+	if err != nil {
+		return fmt.Errorf("error installing on initializing venv")
+	}
 	return err
 }

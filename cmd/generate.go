@@ -82,7 +82,8 @@ func Execute() {
 					pkgName := strings.Split(code, " ")[1]
 					if pkgName == "PIL" {
 						imports = append(imports, "Pillow")
-					} else {
+					} else if pkgName != "io" {
+
 						imports = append(imports, pkgName)
 					}
 				}
