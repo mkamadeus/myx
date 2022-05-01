@@ -74,6 +74,11 @@ func Execute() {
 			// get imports for executor
 			logger.Logger.Instance.Info("getting required imports")
 			imports := make([]string, 0)
+
+			if s.Input.Format == "image" {
+				imports = append(imports, "python-multipart")
+			}
+
 			codeLines := strings.Split(apiCode, "\n")
 			r1 := regexp.MustCompile(`from (\w+) import .*`)
 			r2 := regexp.MustCompile(`import (\w+)`)
@@ -82,6 +87,8 @@ func Execute() {
 					pkgName := strings.Split(code, " ")[1]
 					if pkgName == "PIL" {
 						imports = append(imports, "Pillow")
+					} else if strings.Contains(pkgName, "keras") {
+						imports = append(imports, "tensorflow")
 					} else if pkgName != "io" {
 
 						imports = append(imports, pkgName)
