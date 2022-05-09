@@ -1,1 +1,1 @@
-t{{.Index}} =  np.array([[ scaled[{{.Position}}] ]])
+t{{.Index}} =  np.array([ [scaled[0, {{.Position}}]] ])

@@ -85,12 +85,16 @@ func Execute() {
 			for _, code := range codeLines {
 				if r1.Match([]byte(code)) || r2.Match([]byte(code)) {
 					pkgName := strings.Split(code, " ")[1]
+					if pkgName == "fastapi" {
+						imports = append(imports, "fastapi[all]")
+					}
 					if pkgName == "PIL" {
 						imports = append(imports, "Pillow")
 					} else if strings.Contains(pkgName, "keras") {
 						imports = append(imports, "tensorflow")
-					} else if pkgName != "io" {
-
+					} else if strings.Contains(pkgName, "joblib") {
+						imports = append(imports, "scikit-learn")
+					} else if pkgName != "io" && pkgName != "os" {
 						imports = append(imports, pkgName)
 					}
 				}

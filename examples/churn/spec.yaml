@@ -15,6 +15,9 @@ input:
       - name: credit_score
         type: float
         preprocessed: true
+      - name: age
+        type: float
+        preprocessed: true
       - name: geography
         type: categorical
         preprocessed: true
@@ -41,7 +44,7 @@ input:
         preprocessed: true
 output:
   - name: prediction
-    type: float
+    type: float[]
 pipeline:
   - module: preprocessing/scale
     meta:
