@@ -41,8 +41,8 @@ class Output(BaseModel):
 async def root(body: Input):
     t9 =  np.array([[body.has_credit_card]])
     t10 =  np.array([[body.is_active_member]])
-    scaler_credit_score_age_tenure_balance_num_of_products_estimated_salary = joblib.load('churn.scaler')
-    scaled = scaler_credit_score_age_tenure_balance_num_of_products_estimated_salary.transform(np.array([[body.credit_score,body.age,body.tenure,body.balance,body.num_of_products,body.estimated_salary,]]))
+    scaler = joblib.load('churn.scaler')
+    scaled = scaler.transform(np.array([[body.credit_score,body.age,body.tenure,body.balance,body.num_of_products,body.estimated_salary,]]))
     t0 =  np.array([ [scaled[0, 0]] ])
     t5 =  np.array([ [scaled[0, 1]] ])
     t6 =  np.array([ [scaled[0, 2]] ])

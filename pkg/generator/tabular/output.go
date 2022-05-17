@@ -19,7 +19,6 @@ func (g *TabularGenerator) RenderOutputSpec() (*generator.OutputCode, error) {
 			Type: m.Type,
 		}
 		// check array type, duplicates will be thrown away later
-		fmt.Println(value.Type)
 		if strings.HasSuffix(value.Type, "[]") {
 			imports = append(imports, "from typing import List")
 			value.Type = fmt.Sprintf("List[%s]", models.BodyTypeMapper[value.Type[0:len(value.Type)-2]])
