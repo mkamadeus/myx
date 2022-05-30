@@ -39,6 +39,17 @@ Flags:
   -v, --verbose         verbose output
 ```
 
+#### Running in Docker
+
+Build the image and pass the parameters when running through `docker run`. E.g:
+
+```bash
+docker build -t myx:latest .
+docker run \
+  -v "$(pwd)/examples/:/root/examples" \
+  myx:latest --output ./examples/titanic ./examples/titanic/spec.yaml
+```
+
 ### Specification Format
 
 Some examples are generated in the `examples` directory.
