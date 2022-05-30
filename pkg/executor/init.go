@@ -12,7 +12,7 @@ func (e *Executor) InitCommand() error {
 	cmd.Dir = e.Path
 	err := cmd.Run()
 	if err != nil {
-		return fmt.Errorf("error installing on initializing venv")
+		return fmt.Errorf("error installing on initializing venv: %v", err)
 	}
 	return err
 }
