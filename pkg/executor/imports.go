@@ -2,6 +2,7 @@ package executor
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"path"
 	"strings"
@@ -16,6 +17,7 @@ func (e *Executor) ImportsCommand() error {
 		logger.Logger.Instance.Debug(statement)
 		cmd := exec.Command(statement[0], statement[1:]...)
 		cmd.Dir = e.Path
+		cmd.Stdout = os.Stdout
 		err := cmd.Run()
 		if err != nil {
 			return fmt.Errorf("error installing on package %s", i)
