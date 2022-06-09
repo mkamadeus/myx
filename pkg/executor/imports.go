@@ -13,7 +13,7 @@ import (
 func (e *Executor) ImportsCommand() error {
 
 	for _, i := range e.Imports {
-		statement := strings.Split(fmt.Sprintf("%s install %s", path.Join(e.Path, "venv/bin/pip"), i), " ")
+		statement := strings.Split(fmt.Sprintf("%s install --no-cache-dir --upgrade %s", path.Join(e.Path, "venv/bin/pip"), i), " ")
 		logger.Logger.Instance.Debug(statement)
 		cmd := exec.Command(statement[0], statement[1:]...)
 		cmd.Dir = e.Path
